@@ -1,12 +1,28 @@
 using UnityEngine;
 
 public class Move : MonoBehaviour {
+    [SerializeField]
+    public bool winGameA = false;
+
     public float speed = 15;
     Vector2 velocity;
     Rigidbody2D rb;
     Animator animator;
     bool isMoving;
+    private static GameObject instance;
+
     private void Awake() {
+        if (instance == null)
+        {
+            instance = gameObject;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            DestroyImmediate(gameObject);
+            return;
+        }
+
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
         velocity = Vector2.zero;
@@ -25,6 +41,13 @@ public class Move : MonoBehaviour {
         } else {
             isMoving = false;
             animator.SetBool("isMoving", isMoving);
+        }
+
+        if (winGameA == true)
+        {
+            // to add notification on winning the minigame
+            Debug.Log("Win Substitution Cipher Game");
+            winGameA = false;
         }
     }
 

@@ -4,10 +4,7 @@ using SQLite4Unity3d;
 using System.IO;
 using UnityEngine.UI;
 
-public class getPhrase
-{
-    public string phrase { get; set; }
-}
+
 
 public class EncryptionQn : MonoBehaviour
 {

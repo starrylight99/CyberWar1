@@ -1,0 +1,2 @@
+1. Try to make Input Field more responsive
+2. Design 2nd game for Sabotage, (Intel game prob use the substitution game, more related)

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
+
 public class StartMinigameA : MonoBehaviour
 {
+    GameObject player;
     // Start is called before the first frame update
-    public GameObject player;
     float r = 5.0f;
-    void Start()
+    void Awake()
     {
-        
+        // change to ClientScene.localPlayer.gameObject when integrating multiplayer
+        player = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -26,7 +29,7 @@ public class StartMinigameA : MonoBehaviour
         if ((Mathf.Abs(curr_pos.x - player_pos.x) <= r) && (Mathf.Abs(curr_pos.y - player_pos.y) <= r))
         {
             Debug.Log("Inside");
-            SceneManager.LoadScene("MinigameAScene");
+            SceneManager.LoadScene("SubstMinigameScene");
         }
         else
         {
