@@ -4,6 +4,7 @@ using TMPro;
 using System.IO;
 using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class getPhrase
 {
@@ -17,8 +18,10 @@ public class SubstQn : MonoBehaviour
     GameObject part1;
     GameObject part2;
     GameObject player;
+    public int numHints;
     string key_arr = "";
     string shuffle = "abcdefghijklmnopqrstuvwxyz";
+    string range = "abcdefghijklmnopqrstuvwxyz";
     string answer;
     float speed;
 
@@ -72,7 +75,7 @@ public class SubstQn : MonoBehaviour
         example = example + "\n" + encryptSubst(example, shuffle);
         part1.transform.GetChild(1).GetChild(0).GetComponent<TextMeshProUGUI>().SetText(example);
         part1.GetComponentInChildren<Button>().onClick.AddListener(Part1ToPart2);
-        
+        giveHint(numHints);
     }
 
     void Part1ToPart2()
@@ -80,11 +83,19 @@ public class SubstQn : MonoBehaviour
         GameObject keyField = part1.transform.GetChild(0).GetChild(1).gameObject;
         for (int i = 0; i < 26; i++)
         {
-            string inputted = keyField.transform.GetChild(i).GetChild(0).
-                GetComponent<TMP_InputField>().text;
-            if (inputted == "")
+            string inputted = "";
+            GameObject obj = keyField.transform.GetChild(i).GetChild(0).gameObject;
+            if (obj.activeInHierarchy)
             {
-                inputted = " ";
+                inputted = obj.GetComponent<TMP_InputField>().text;
+                if (inputted == "")
+                {
+                    inputted = " ";
+                }
+            }
+            else
+            {
+                inputted = keyField.transform.GetChild(i).GetChild(1).GetComponent<TextMeshProUGUI>().text;
             }
             key_arr += inputted;
         }
@@ -98,7 +109,7 @@ public class SubstQn : MonoBehaviour
             derivedKeyField.transform.GetChild(i).GetChild(0).
                 GetComponent<TextMeshProUGUI>().SetText(key_arr[i].ToString());
         }
-    
+        
     }
 
     void submit()
@@ -107,7 +118,7 @@ public class SubstQn : MonoBehaviour
         if (input == answer)
         {
             Debug.Log("correct");
-            player.GetComponent<Move>().winGameA = true;
+            player.GetComponent<Move>().winIntelGame = true;
         }
         else
         {
@@ -130,6 +141,31 @@ public class SubstQn : MonoBehaviour
             array[n] = value;
         }
         return new string(array);
+    }
+
+    void giveHint(int n)
+    {
+        range = Shuffle(range);
+        for (int i = 0; i < n; i++)
+        {
+            int letter = range[i] - 'a';
+            
+            GameObject box = part1.transform.GetChild(0).GetChild(1).GetChild(letter).gameObject;
+            box.transform.GetChild(0).gameObject.SetActive(false);
+            GameObject text = new GameObject().gameObject;
+            text.transform.SetParent(box.transform);
+            configure(text, letter);
+        }
+    }
+
+    void configure(GameObject text, int letter)
+    {
+        text.AddComponent<TextMeshProUGUI>().SetText(shuffle[letter].ToString());
+        text.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f);
+        text.GetComponent<RectTransform>().sizeDelta = new Vector2(20f, 20f);
+        text.GetComponent<TextMeshProUGUI>().fontSize = 16;
+        text.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
+        text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
     }
 
     string encryptSubst(string input, string shuffle)
