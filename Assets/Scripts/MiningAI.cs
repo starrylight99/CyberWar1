@@ -11,7 +11,7 @@ public class MiningAI : MonoBehaviour {
         MovingToStorage,
     }
     private State state;
-    private Transform resourceNodeTransform;
+    private ResourceNode resourceNode;
     private Transform storageTransform;
     private int resourceInventoryAmount;
     bool idle;
@@ -19,6 +19,7 @@ public class MiningAI : MonoBehaviour {
     public float speed = 15;
     Vector2 desiredVelocity,desiredPosition;
     float sqrMag,currSqrMag;
+    TextMesh inventoryTextMesh;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
@@ -26,6 +27,8 @@ public class MiningAI : MonoBehaviour {
         desiredPosition = rb.transform.position;
         desiredVelocity = Vector2.zero;
         state = State.Idle;
+        inventoryTextMesh = transform.Find("InventoryTextMesh").GetComponent<TextMesh>();
+        UpdateInventoryText();
     }
 
     private async void Update() {
@@ -37,24 +40,28 @@ public class MiningAI : MonoBehaviour {
         sqrMag = currSqrMag;
         switch (state) {
         case State.Idle:
-            resourceNodeTransform = GameHandler.GetResourceNode_Static();
-            state = State.MovingToResourceNode;
+            //resourceNode = GameHandler.GetResourceNode_Static();
+            if (resourceNode != null) {
+                state = State.MovingToResourceNode;
+            }
             break;
         case State.MovingToResourceNode:
             if (idle) {
-                StartCoroutine(moveTo(resourceNodeTransform.position, () => {
+                StartCoroutine(moveTo(resourceNode.GetPosition(), () => {
                     state = State.GatheringResources;
                 }));
             }
             break;
         case State.GatheringResources:
             if (idle) {
-                if (resourceInventoryAmount > 0) {
+                if (resourceInventoryAmount >= 3) {
                     storageTransform = GameHandler.GetStorage_Static();
                     state = State.MovingToStorage;
                 } else {
                     await playAnimationMine(() => {
+                        resourceNode.GrabResource();
                         resourceInventoryAmount++;
+                        UpdateInventoryText();
                     });
                 }
             }
@@ -65,6 +72,7 @@ public class MiningAI : MonoBehaviour {
                     GameResources.AddGoldAmount(resourceInventoryAmount);
                     Debug.Log(GameResources.GetGoldAmount());
                     resourceInventoryAmount = 0;
+                    UpdateInventoryText();
                     state = State.Idle;
                 }));
             }
@@ -88,8 +96,18 @@ public class MiningAI : MonoBehaviour {
     }
     public async Task playAnimationMine(Action onAnimationCompleted){
         idle = false;
-        await Task.Delay(3000);
+        await Task.Delay(1000);
         onAnimationCompleted();
         idle = true;
+    }
+    private void UpdateInventoryText() {
+        if (resourceInventoryAmount > 0) {
+            inventoryTextMesh.text = "" + resourceInventoryAmount;
+        } else {
+            inventoryTextMesh.text = "";
+        }
+    }
+    public void SetResourceNode(ResourceNode resourceNode) {
+        this.resourceNode = resourceNode;
     }
 }

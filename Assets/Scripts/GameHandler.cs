@@ -1,22 +1,44 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 public class GameHandler : MonoBehaviour {
     private static GameHandler instance;
     [SerializeField] private Transform resourceNode1Transform;
     [SerializeField] private Transform resourceNode2Transform;
     [SerializeField] private Transform resourceNode3Transform;
     [SerializeField] private Transform storageTransform;
-
+    [SerializeField] private MiningAI miningAI;
+    private List<ResourceNode> resourceNodeList;
     private void Awake() {
         instance = this;
+
+        resourceNodeList = new List<ResourceNode>();
+        resourceNodeList.Add(new ResourceNode(resourceNode1Transform));
+        resourceNodeList.Add(new ResourceNode(resourceNode2Transform));
+        resourceNodeList.Add(new ResourceNode(resourceNode3Transform));
+        //Debug.Log(resourceNodeList[1].GetPosition());
+        ResourceNode.OnResourceNodeClicked += ResourceNode_OnResourceNodeClicked;
     }
 
-    private Transform GetResourceNode() {
-        List<Transform> resourceNodeList = new List<Transform>() { resourceNode1Transform, resourceNode2Transform, resourceNode3Transform };
-        return resourceNodeList[UnityEngine.Random.Range(0, resourceNodeList.Count)];
+    private ResourceNode GetResourceNode() {
+        List<ResourceNode> tmpResourceNodeList = new List<ResourceNode>(resourceNodeList);
+        for (int i = 0; i < tmpResourceNodeList.Count; i++) {
+            if (!tmpResourceNodeList[i].HasResources()) {
+                tmpResourceNodeList.RemoveAt(i);
+                i--;
+            }
+        }
+        if (tmpResourceNodeList.Count > 0) {
+            return tmpResourceNodeList[UnityEngine.Random.Range(0, tmpResourceNodeList.Count)];
+        } else {
+            return null;
+        }
     }
-
-    public static Transform GetResourceNode_Static() {
+    private void ResourceNode_OnResourceNodeClicked(object sender, EventArgs e) {
+        ResourceNode resourceNode = sender as ResourceNode;
+        miningAI.SetResourceNode(resourceNode);
+    }
+    public static ResourceNode GetResourceNode_Static() {
         return instance.GetResourceNode();
     }
     
