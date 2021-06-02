@@ -35,7 +35,6 @@ public class SaboScript : MonoBehaviour
     GameObject inst2;
     GameObject game;
     GameObject player;
-    float speed;
     string displayText = "";
     string answer = "";
     public int numGames;
@@ -52,8 +51,7 @@ public class SaboScript : MonoBehaviour
         inst2 = transform.GetChild(1).gameObject;
         game = transform.GetChild(2).gameObject;
         player = GameObject.FindGameObjectWithTag("Player");
-        speed = player.GetComponent<Move>().speed;
-        player.GetComponent<Move>().speed = 0f;
+        player.SetActive(false);
         inst1.SetActive(true);
         inst2.SetActive(false);
         game.SetActive(false);
@@ -92,8 +90,7 @@ public class SaboScript : MonoBehaviour
                 removeText(keypad);
             }); //10th child is clr
         keypad.transform.GetChild(11).GetComponent<Button>().onClick.AddListener(submit); //11th child is submit
-        
-        SQLiteConnection _db = new SQLiteConnection(Path.GetFullPath("Assets") + "/Scripts/phrases.db");
+        SQLiteConnection _db = new SQLiteConnection(Application.streamingAssetsPath + "/phrases.db");
         LinkedList<Query> llQuery = new LinkedList<Query>();
         for (int i = 0; i < numGames; i++)
         {
@@ -252,13 +249,13 @@ public class SaboScript : MonoBehaviour
         if (displayText.Equals(answer))
         {
             Debug.Log("Correct");
-            player.GetComponent<Move>().winSaboGame = true;
+            player.GetComponent<States>().winSaboGame = true;
         }
         else
         {
             Debug.Log("Wrong");
         }
-        player.GetComponent<Move>().speed = speed;
+        player.SetActive(true);
         SceneManager.LoadScene("RoomScene");
     }
 

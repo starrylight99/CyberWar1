@@ -9,7 +9,7 @@ public class StartComputer : MonoBehaviour
 {
     GameObject player;
     // Start is called before the first frame update
-    float r = 5.0f;
+    float r = 6.0f;
     void Awake()
     {
         // change to ClientScene.localPlayer.gameObject when integrating multiplayer

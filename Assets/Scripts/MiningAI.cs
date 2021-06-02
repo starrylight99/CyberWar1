@@ -32,7 +32,7 @@ public class MiningAI : MonoBehaviour {
     }
 
     private async void Update() {
-        Debug.Log(state);
+        //Debug.Log(state);
         currSqrMag = (desiredPosition - rb.position).sqrMagnitude;
         if (currSqrMag > sqrMag){
             desiredVelocity = Vector2.zero;
@@ -68,8 +68,18 @@ public class MiningAI : MonoBehaviour {
             break;
         case State.MovingToStorage:
             if (idle) {
-                StartCoroutine(moveTo(storageTransform.position, () => {
-                    GameResources.AddGoldAmount(resourceInventoryAmount);
+                    storageTransform = GameHandler.GetStorage_Static();
+
+                    StartCoroutine(moveTo(storageTransform.position, () => {
+                    if (GameObject.Find("Resources"))
+                        {
+                            GameResources.AddGoldAmount(resourceInventoryAmount, true);
+                        }
+                        else
+                        {
+                            GameResources.AddGoldAmount(resourceInventoryAmount, false);
+                        }
+                    
                     Debug.Log(GameResources.GetGoldAmount());
                     resourceInventoryAmount = 0;
                     UpdateInventoryText();
@@ -101,11 +111,23 @@ public class MiningAI : MonoBehaviour {
         idle = true;
     }
     private void UpdateInventoryText() {
-        if (resourceInventoryAmount > 0) {
-            inventoryTextMesh.text = "" + resourceInventoryAmount;
-        } else {
-            inventoryTextMesh.text = "";
-        }
+        try //not sure what else i can do about this
+        {
+            if (resourceInventoryAmount > 0)
+            {
+                inventoryTextMesh.text = "" + resourceInventoryAmount;
+            }
+            else
+            {
+                inventoryTextMesh.text = "";
+            }
+        }catch (MissingReferenceException)
+        {
+            Debug.Log("Destroyed");
+        } 
+            
+        
+        
     }
     public void SetResourceNode(ResourceNode resourceNode) {
         this.resourceNode = resourceNode;

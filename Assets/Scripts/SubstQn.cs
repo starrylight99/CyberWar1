@@ -23,7 +23,6 @@ public class SubstQn : MonoBehaviour
     string shuffle = "abcdefghijklmnopqrstuvwxyz";
     string range = "abcdefghijklmnopqrstuvwxyz";
     string answer;
-    float speed;
 
     void Start()
     {
@@ -31,8 +30,7 @@ public class SubstQn : MonoBehaviour
         part1 = transform.GetChild(1).gameObject;
         part2 = transform.GetChild(2).gameObject;
         player = GameObject.FindGameObjectWithTag("Player");
-        speed = player.GetComponent<Move>().speed;
-        player.GetComponent<Move>().speed = 0f;
+        player.SetActive(false);
         inst.SetActive(true);
         part1.SetActive(false);
         part2.SetActive(false);
@@ -118,13 +116,13 @@ public class SubstQn : MonoBehaviour
         if (input == answer)
         {
             Debug.Log("correct");
-            player.GetComponent<Move>().winIntelGame = true;
+            player.GetComponent<States>().winIntelGame = true;
         }
         else
         {
             Debug.Log("wrong");
         }
-        player.GetComponent<Move>().speed = speed;
+        player.SetActive(true);
         SceneManager.LoadScene("RoomScene");
     }
 
@@ -163,7 +161,7 @@ public class SubstQn : MonoBehaviour
         text.AddComponent<TextMeshProUGUI>().SetText(shuffle[letter].ToString());
         text.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f);
         text.GetComponent<RectTransform>().sizeDelta = new Vector2(20f, 20f);
-        text.GetComponent<TextMeshProUGUI>().fontSize = 16;
+        text.GetComponent<TextMeshProUGUI>().fontSize = 10;
         text.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
         text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
     }
@@ -187,7 +185,7 @@ public class SubstQn : MonoBehaviour
     void startQn()
     {
         int choice = rng.Next(1, 10);
-        SQLiteConnection _db = new SQLiteConnection(Path.GetFullPath("Assets") + "/Scripts/phrases.db");
+        SQLiteConnection _db = new SQLiteConnection(Application.streamingAssetsPath + "/phrases.db");
         string query = $"SELECT * FROM phrases WHERE ROWID = " + choice.ToString();
         answer = _db.Query<getPhrase>(query)[0].phrase;
         Debug.Log(answer);

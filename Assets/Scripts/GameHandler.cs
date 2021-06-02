@@ -1,6 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections;
+
 public class GameHandler : MonoBehaviour {
     private static GameHandler instance;
     [SerializeField] private Transform resourceNode1Transform;
@@ -9,9 +13,23 @@ public class GameHandler : MonoBehaviour {
     [SerializeField] private Transform storageTransform;
     [SerializeField] private MiningAI miningAI;
     private List<ResourceNode> resourceNodeList;
-    private void Awake() {
-        instance = this;
+    GameObject player;
+    private static GameObject objInstance;
 
+    private void Awake() {
+        
+        
+        if (objInstance == null)
+        {
+            objInstance = gameObject;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            DestroyImmediate(gameObject);
+            return;
+        }
+        instance = this;
         resourceNodeList = new List<ResourceNode>();
         resourceNodeList.Add(new ResourceNode(resourceNode1Transform));
         resourceNodeList.Add(new ResourceNode(resourceNode2Transform));
@@ -19,6 +37,10 @@ public class GameHandler : MonoBehaviour {
         //Debug.Log(resourceNodeList[1].GetPosition());
         ResourceNode.OnResourceNodeClicked += ResourceNode_OnResourceNodeClicked;
     }
+
+    
+
+  
 
     private ResourceNode GetResourceNode() {
         List<ResourceNode> tmpResourceNodeList = new List<ResourceNode>(resourceNodeList);

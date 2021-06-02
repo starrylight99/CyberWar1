@@ -1,10 +1,7 @@
 using UnityEngine;
 
 public class Move : MonoBehaviour {
-    [SerializeField]
-    public bool winIntelGame = false;
-    [SerializeField]
-    public bool winSaboGame = false;
+    
 
     public float speed = 15;
     Vector2 velocity;
@@ -43,19 +40,6 @@ public class Move : MonoBehaviour {
         } else {
             isMoving = false;
             animator.SetBool("isMoving", isMoving);
-        }
-
-        if (winIntelGame == true)
-        {
-            // to add notification on winning the minigame
-            Debug.Log("Win Substitution Cipher Game");
-            winIntelGame = false;
-        }
-        if (winSaboGame == true)
-        {
-            // to add notification on winning the minigame
-            Debug.Log("Win Sabotage Game");
-            winSaboGame = false;
         }
     }
 

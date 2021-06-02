@@ -22,6 +22,7 @@ public class StartGenerator : MonoBehaviour
             if (Vector2.Distance(player_pos,curr_pos)<= r)
             {
                 Debug.Log("Inside");
+                
                 SceneManager.LoadScene("MiningScene");
             }
             else
@@ -29,5 +30,10 @@ public class StartGenerator : MonoBehaviour
                 Debug.Log("Please go in closer");
             }
         };
+    }
+
+    private void Update()
+    {
+        
     }
 }
