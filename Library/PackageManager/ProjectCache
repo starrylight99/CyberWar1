@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637580642605043139
-    m_Hash: 865189543
+      ticks: 637584964938004407
+    m_Hash: 3605547187
   m_LockFileStatus:
     m_FilePath: D:/CyberWar1/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637580642605044226
-    m_Hash: 3756933951
+      ticks: 637584964938175237
+    m_Hash: 666272886
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
@@ -76,6 +76,7 @@ m_PackageAssets:
         - 3.2.4
         - 3.2.5
         - 3.2.6
+        - 3.2.9
         - 4.0.0
         - 4.0.1
         - 4.1.0
@@ -444,6 +445,7 @@ m_PackageAssets:
         - 2.0.5
         - 2.0.7
         - 2.0.8
+        - 2.0.9
         compatible:
         - 1.0.2
         - 1.0.3
@@ -458,7 +460,8 @@ m_PackageAssets:
         - 2.0.5
         - 2.0.7
         - 2.0.8
-        verified: 2.0.8
+        - 2.0.9
+        verified: 2.0.9
       dependencies:
       - name: com.unity.test-framework
         version: 1.1.9
@@ -609,9 +612,11 @@ m_PackageAssets:
         - 1.1.20
         - 1.1.22
         - 1.1.24
+        - 1.1.26
         compatible:
         - 1.1.24
-        verified: 1.1.24
+        - 1.1.26
+        verified: 1.1.26
       dependencies:
       - name: com.unity.ext.nunit
         version: 1.0.6
@@ -998,6 +1003,57 @@ m_PackageAssets:
       - ugui
       - Unity UI
       - Canvas
+      registry:
+        id: 
+        name: 
+        url: 
+        scopes: []
+        isDefault: 0
+        capabilities: 0
+      hasRegistry: 0
+      hideInEditor: 1
+      entitlements:
+        isAllowed: 1
+      isAssetStorePackage: 0
+      datePublishedTicks: 0
+      documentationUrl: 
+      hasRepository: 0
+      repository:
+        type: 
+        url: 
+        revision: 
+        path: 
+    - packageId: com.veriorpies.parrelsync@https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync
+      testable: 0
+      isDirectDependency: 1
+      version: 1.5.0
+      source: 5
+      resolvedPath: D:\CyberWar1\Library\PackageCache\com.veriorpies.parrelsync@95a062cb14
+      assetPath: Packages/com.veriorpies.parrelsync
+      name: com.veriorpies.parrelsync
+      displayName: ParrelSync
+      author:
+        name: 
+        email: 
+        url: 
+      category: 
+      type: 
+      description: ParrelSync is a Unity editor extension that allows users to test
+        multiplayer gameplay without building the project by having another Unity
+        editor window opened and mirror the changes from the original project.
+      status: 4
+      errors: []
+      versions:
+        all: []
+        compatible: []
+        verified: 
+      dependencies: []
+      resolvedDependencies: []
+      keywords:
+      - Networking
+      - Utils
+      - Editor
+      - Extensions
       registry:
         id: 
         name: 

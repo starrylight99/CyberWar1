@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class States : MonoBehaviour
+public class States : NetworkBehaviour
 {
     [SerializeField]
     public bool winIntelGame = false;

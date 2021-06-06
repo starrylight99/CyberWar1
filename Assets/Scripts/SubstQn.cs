@@ -18,6 +18,7 @@ public class SubstQn : MonoBehaviour
     GameObject part1;
     GameObject part2;
     GameObject player;
+    GameObject mainCamera;
     public int numHints;
     string key_arr = "";
     string shuffle = "abcdefghijklmnopqrstuvwxyz";
@@ -26,11 +27,12 @@ public class SubstQn : MonoBehaviour
 
     void Start()
     {
+        SceneManager.UnloadSceneAsync("ChooseComputerGame");
         inst = transform.GetChild(0).gameObject;
         part1 = transform.GetChild(1).gameObject;
         part2 = transform.GetChild(2).gameObject;
-        player = GameObject.FindGameObjectWithTag("Player");
-        player.SetActive(false);
+        player = GameObject.FindGameObjectWithTag("Player").gameObject;
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").gameObject;
         inst.SetActive(true);
         part1.SetActive(false);
         part2.SetActive(false);
@@ -122,8 +124,9 @@ public class SubstQn : MonoBehaviour
         {
             Debug.Log("wrong");
         }
-        player.SetActive(true);
-        SceneManager.LoadScene("RoomScene");
+        player.transform.GetChild(0).gameObject.SetActive(true);
+        player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
+        SceneManager.UnloadSceneAsync("IntelGameScene");
     }
 
     string Shuffle(string str)

@@ -35,6 +35,7 @@ public class SaboScript : MonoBehaviour
     GameObject inst2;
     GameObject game;
     GameObject player;
+    GameObject mainCamera;
     string displayText = "";
     string answer = "";
     public int numGames;
@@ -47,11 +48,12 @@ public class SaboScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        SceneManager.UnloadSceneAsync("ChooseComputerGame");
         inst1 = transform.GetChild(0).gameObject;
         inst2 = transform.GetChild(1).gameObject;
         game = transform.GetChild(2).gameObject;
-        player = GameObject.FindGameObjectWithTag("Player");
-        player.SetActive(false);
+        player = GameObject.FindGameObjectWithTag("Player").gameObject;
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").gameObject;
         inst1.SetActive(true);
         inst2.SetActive(false);
         game.SetActive(false);
@@ -255,8 +257,9 @@ public class SaboScript : MonoBehaviour
         {
             Debug.Log("Wrong");
         }
-        player.SetActive(true);
-        SceneManager.LoadScene("RoomScene");
+        player.transform.GetChild(0).gameObject.SetActive(true);
+        player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
+        SceneManager.UnloadSceneAsync("SabotageGameScene");
     }
 
     private void removeText(GameObject keypad)

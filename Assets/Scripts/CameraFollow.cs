@@ -1,6 +1,7 @@
 using UnityEngine;
+using Mirror;
 
-public class CameraFollow : MonoBehaviour {
+public class CameraFollow : NetworkBehaviour {
     Transform target;
     public float smoothTime = 0.3f;
     private Vector3 velocity = Vector3.zero;
@@ -8,11 +9,18 @@ public class CameraFollow : MonoBehaviour {
     private void Awake()
     {
         // change to ClientScene.localPlayer.gameObject when integrating multiplayer
-        target = GameObject.FindGameObjectWithTag("Player").transform;
+        target = NetworkClient.localPlayer.gameObject.transform;
+        Debug.Log(target);
     }
 
+    
+
     private void Update() {
-        Vector3 targetPosition = target.TransformPoint(new Vector3(0,0,-10));
-        transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+        if (this.isLocalPlayer)
+        {
+            Vector3 targetPosition = target.TransformPoint(new Vector3(0, 0, -10));
+            transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
+        }
+        
     }
 }
