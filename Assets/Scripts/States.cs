@@ -11,10 +11,10 @@ public class States : NetworkBehaviour
     public bool winSaboGame = false;
     [SerializeField]
     public int resourceInventory = 0;
+
     // Start is called before the first frame update
     void Start()
-    {
-        
+    {   
     }
 
     // Update is called once per frame

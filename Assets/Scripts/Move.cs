@@ -13,6 +13,7 @@ public class Move : NetworkBehaviour {
     private static GameObject instance;
 
     private void Awake() {
+        Debug.Log("awake");
     }
 
     public override void OnStartClient()
@@ -78,13 +79,13 @@ public class Move : NetworkBehaviour {
         
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.tag == "Player")
-        {
-            collision.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
-        }
-    }
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+    //    if (collision.gameObject.tag == "Player")
+    //    {
+    //        collision.gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
+    //    }
+    //}
     //private void OnCollisionExit2D(Collision2D collision)
     //{
     //    if (collision.gameObject.tag == "Player")

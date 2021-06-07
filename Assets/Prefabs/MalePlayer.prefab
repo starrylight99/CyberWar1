@@ -125,7 +125,7 @@ Rigidbody2D:
   m_GameObject: {fileID: 4590728566462205548}
   m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 1
+  m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 8743031823227735484}
   - component: {fileID: 3141482404909950481}
   - component: {fileID: 2471590946877729072}
-  - component: {fileID: 5192196622325277789}
+  - component: {fileID: 1670704631353680910}
   m_Layer: 8
   m_Name: MalePlayer
   m_TagString: Player
@@ -312,9 +312,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 1000
   m_LinearDrag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -407,7 +407,7 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 1
   animator: {fileID: 7307375327221808040}
---- !u!114 &5192196622325277789
+--- !u!114 &1670704631353680910
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

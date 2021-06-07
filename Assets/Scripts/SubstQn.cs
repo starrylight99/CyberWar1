@@ -31,7 +31,13 @@ public class SubstQn : MonoBehaviour
         inst = transform.GetChild(0).gameObject;
         part1 = transform.GetChild(1).gameObject;
         part2 = transform.GetChild(2).gameObject;
-        player = GameObject.FindGameObjectWithTag("Player").gameObject;
+        foreach (GameObject players in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (players.GetComponent<States>().isLocalPlayer)
+            {
+                player = players;
+            }
+        }
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").gameObject;
         inst.SetActive(true);
         part1.SetActive(false);
@@ -126,6 +132,7 @@ public class SubstQn : MonoBehaviour
         }
         player.transform.GetChild(0).gameObject.SetActive(true);
         player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
+        Debug.Log(player);
         SceneManager.UnloadSceneAsync("IntelGameScene");
     }
 

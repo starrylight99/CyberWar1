@@ -52,7 +52,13 @@ public class SaboScript : MonoBehaviour
         inst1 = transform.GetChild(0).gameObject;
         inst2 = transform.GetChild(1).gameObject;
         game = transform.GetChild(2).gameObject;
-        player = GameObject.FindGameObjectWithTag("Player").gameObject;
+        foreach (GameObject players in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (players.GetComponent<States>().isLocalPlayer)
+            {
+                player = players;
+            }
+        }
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera").gameObject;
         inst1.SetActive(true);
         inst2.SetActive(false);
