@@ -7,6 +7,8 @@ TagManager:
   - Button
   - Environment
   - GameHandler
+  - Lobby
+  - NetworkManager
   layers:
   - Default
   - TransparentFX

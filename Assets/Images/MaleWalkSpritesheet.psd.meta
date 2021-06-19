@@ -142,12 +142,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_0
       rect:
         serializedVersion: 2
-        x: 891
-        y: 1154
-        width: 22
-        height: 32
+        x: 892
+        y: 1155
+        width: 20
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -163,12 +163,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_1
       rect:
         serializedVersion: 2
-        x: 932
-        y: 1154
-        width: 22
-        height: 34
+        x: 933
+        y: 1155
+        width: 20
+        height: 31
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -184,12 +184,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_2
       rect:
         serializedVersion: 2
-        x: 973
-        y: 1154
-        width: 22
-        height: 32
+        x: 974
+        y: 1155
+        width: 20
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -205,12 +205,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_3
       rect:
         serializedVersion: 2
-        x: 890
-        y: 1119
-        width: 22
-        height: 32
+        x: 891
+        y: 1120
+        width: 21
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -226,12 +226,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_4
       rect:
         serializedVersion: 2
-        x: 931
-        y: 1118
-        width: 21
-        height: 35
+        x: 932
+        y: 1120
+        width: 20
+        height: 31
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -247,12 +247,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_5
       rect:
         serializedVersion: 2
-        x: 972
-        y: 1119
-        width: 21
-        height: 32
+        x: 973
+        y: 1120
+        width: 20
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -268,12 +268,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_6
       rect:
         serializedVersion: 2
-        x: 890
-        y: 1080
-        width: 22
-        height: 33
+        x: 891
+        y: 1082
+        width: 20
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -289,12 +289,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_7
       rect:
         serializedVersion: 2
-        x: 931
-        y: 1081
-        width: 22
-        height: 34
+        x: 932
+        y: 1082
+        width: 20
+        height: 31
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -310,12 +310,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_8
       rect:
         serializedVersion: 2
-        x: 972
-        y: 1080
-        width: 22
-        height: 33
+        x: 973
+        y: 1082
+        width: 20
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -331,12 +331,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_9
       rect:
         serializedVersion: 2
-        x: 889
-        y: 1045
-        width: 22
-        height: 32
+        x: 890
+        y: 1046
+        width: 20
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -352,12 +352,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_10
       rect:
         serializedVersion: 2
-        x: 930
-        y: 1045
-        width: 23
-        height: 33
+        x: 931
+        y: 1046
+        width: 20
+        height: 31
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -373,12 +373,12 @@ TextureImporter:
       name: MaleWalkSpritesheet_11
       rect:
         serializedVersion: 2
-        x: 971
-        y: 1045
-        width: 22
-        height: 32
+        x: 972
+        y: 1046
+        width: 20
+        height: 30
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []

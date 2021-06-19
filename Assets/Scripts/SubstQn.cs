@@ -132,7 +132,8 @@ public class SubstQn : MonoBehaviour
         }
         player.transform.GetChild(0).gameObject.SetActive(true);
         player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
-        Debug.Log(player);
+        player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+        player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
         SceneManager.UnloadSceneAsync("IntelGameScene");
     }
 

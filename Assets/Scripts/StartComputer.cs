@@ -11,15 +11,6 @@ public class StartComputer : NetworkBehaviour
     GameObject player;
     // Start is called before the first frame update
     float r = 6.0f;
-    void Awake()
-    {   
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     private void OnMouseDown()
     {
         player = NetworkClient.localPlayer.gameObject;
@@ -31,6 +22,8 @@ public class StartComputer : NetworkBehaviour
         {
             Debug.Log("Inside");
             player.transform.GetChild(0).GetComponent<AudioListener>().enabled = false;
+            player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+            player.GetComponent<Rigidbody2D>().freezeRotation = true;
             SceneManager.LoadScene("ChooseComputerGame", LoadSceneMode.Additive);
             
         }
