@@ -10,14 +10,15 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] TMP_InputField joinMatchInput;
     [SerializeField] Button joinButton;
     [SerializeField] Button hostButton;
-    [SerializeField] NetworkLobbyManagerCustomised networkLobbyManager;
+    //[SerializeField] NetworkLobbyManagerCustomised networkLobbyManager;
     public void Host()
     {
         displayName.interactable = false;
         joinMatchInput.interactable = false;
         joinButton.interactable = false;
         hostButton.interactable = false;
-        networkLobbyManager.StartHost();
+        GameObject.FindGameObjectWithTag("NetworkManager").
+            GetComponent<NetworkLobbyManagerCustomised>().StartHost();
     }   
     public void Join()
     {
@@ -25,7 +26,11 @@ public class LobbyUI : MonoBehaviour
         joinMatchInput.interactable = false;
         joinButton.interactable = false;
         hostButton.interactable = false;
-        networkLobbyManager.StartClient();
-        networkLobbyManager.networkAddress = joinMatchInput.text;
+        GameObject.FindGameObjectWithTag("NetworkManager").
+            GetComponent<NetworkLobbyManagerCustomised>().networkAddress = joinMatchInput.text;
+        GameObject.FindGameObjectWithTag("NetworkManager").
+            GetComponent<NetworkLobbyManagerCustomised>().StartClient();
+        
     }
+
 }

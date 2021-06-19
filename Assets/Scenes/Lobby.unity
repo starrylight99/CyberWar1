@@ -2052,6 +2052,14 @@ PrefabInstance:
       value: Assets/Scenes/Lobby.unity
       objectReference: {fileID: 0}
     - target: {fileID: 7032829513360160842, guid: f68ebddac858404478c8b409a58b9765, type: 3}
+      propertyPath: offlineScene
+      value: Assets/Scenes/Lobby.unity
+      objectReference: {fileID: 0}
+    - target: {fileID: 7032829513360160842, guid: f68ebddac858404478c8b409a58b9765, type: 3}
+      propertyPath: maxConnections
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7032829513360160842, guid: f68ebddac858404478c8b409a58b9765, type: 3}
       propertyPath: spawnPrefabs.Array.size
       value: 1
       objectReference: {fileID: 0}
@@ -2059,6 +2067,10 @@ PrefabInstance:
       propertyPath: spawnPrefabs.Array.data[0]
       value: 
       objectReference: {fileID: 1655302383690345319, guid: a452fe1ee17d40f488f53032e72090b9, type: 3}
+    - target: {fileID: 7032829513360160842, guid: f68ebddac858404478c8b409a58b9765, type: 3}
+      propertyPath: PersistNetworkManagerToOfflineScene
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7032829513360160843, guid: f68ebddac858404478c8b409a58b9765, type: 3}
       propertyPath: Timeout
       value: 1000000
@@ -3809,17 +3821,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1857130152}
   m_CullTransparentMesh: 1
---- !u!114 &1914117494 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7032829513360160842, guid: f68ebddac858404478c8b409a58b9765, type: 3}
-  m_PrefabInstance: {fileID: 1053549160}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1567ee283d6d48b49a0c294e93e892e1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1916806986
 GameObject:
   m_ObjectHideFlags: 0
@@ -4646,7 +4647,6 @@ MonoBehaviour:
   joinMatchInput: {fileID: 1628612658}
   joinButton: {fileID: 2061918694}
   hostButton: {fileID: 995971800}
-  networkLobbyManager: {fileID: 1914117494}
 --- !u!114 &2109596171
 MonoBehaviour:
   m_ObjectHideFlags: 0

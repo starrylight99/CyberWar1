@@ -16,6 +16,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     public int spriteIndex;
     public string displayName { get; set; } = null;
 
+
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
@@ -35,24 +36,56 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
 
     private IEnumerator enableChooseCharacter()
     {
-        yield return new WaitForSeconds(1f);
-        Button chooseChar = readyScene.transform.GetChild(index + 3).GetChild(1).gameObject.AddComponent<Button>();
+        yield return new WaitForSeconds(0.5f);
+        Button chooseChar;
+        if (readyScene.transform.GetChild(index + 3).GetChild(1).gameObject.GetComponent<Button>() == null)
+        {
+            chooseChar = readyScene.transform.GetChild(index + 3).GetChild(1).gameObject.AddComponent<Button>();
+
+        }
+        else
+        {
+            chooseChar = readyScene.transform.GetChild(index + 3).GetChild(1).gameObject.GetComponent<Button>();
+            readyScene.transform.GetChild(index + 3).GetChild(1).gameObject.GetComponent<Image>().sprite =
+                Resources.Load<Sprite>("shadedDark48");
+        }
         chooseChar.onClick.AddListener(ChooseCharacter);
-        readyScene.transform.GetChild(index + 3).GetChild(1).GetComponent<Image>().color = new Color(255f, 255f, 255f, 255f);
+        readyScene.transform.GetChild(index + 3).GetChild(1).GetComponent<Image>().color =
+            new Color(255f, 255f, 255f, 255f);
     }
 
     private void Quit()
     {
-        Debug.Log("quitting");
         if (index == 0)
         {
-            GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkLobbyManagerCustomised>().StopHost(); //for now?
+            GameObject.FindGameObjectWithTag("NetworkManager").
+                GetComponent<NetworkLobbyManagerCustomised>().StopHost(); //for now?
         }
         else
         {
-            GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkLobbyManagerCustomised>().StopClient();
+            if (isLocalPlayer)
+            {
+                giveTime();
+                CmdRemoveEntry(index);
+                StartCoroutine("removeClient");
+            }
         }
+    }
 
+    [Command]
+    void giveTime()
+    {
+        Debug.Log(Time.time);
+    }
+
+    private IEnumerator removeClient()
+    {
+        yield return new WaitForSeconds(3f);
+        if (isLocalPlayer)
+        {
+            GameObject.FindGameObjectWithTag("NetworkManager").
+                GetComponent<NetworkLobbyManagerCustomised>().StopClient();
+        }
     }
 
     private void ReadyUp()
@@ -149,15 +182,22 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     }
 
     [Command]
+    public void CmdShowReadyStateUserNoChange()
+    {
+        updateReadyStateClientRpc(LobbyResources.playerReadyState);
+    }
+
+    [Command]
     public void CmdSendServerUpdateName()
     {
+        Debug.Log("playerNames Count when giving: " + LobbyResources.playerNames.Count.ToString());
         updateNamesClientRpc(LobbyResources.playerNames);
     }
 
     [Command]
     public void CmdSendServerUpdateSprite()
     {
-        updateSpritesClientRpc(LobbyResources.playerSprites, LobbyResources.playerIndexforSprite);
+        updateSpritesClientRpc(LobbyResources.playerSprites, LobbyResources.playerIndexforSprite, LobbyResources.playerNames);
     }
 
     [Command]
@@ -193,6 +233,34 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
         }
     }
 
+    [Command]
+    void CmdRemoveEntry(int index)
+    {
+        LobbyResources.playerNames.RemoveAt(index);
+        LobbyResources.playerReadyState.RemoveAt(index);
+        int removeIndex = -1;
+        for (int i = 0; i < LobbyResources.playerIndexforSprite.Count; i++)
+        {
+            if (LobbyResources.playerIndexforSprite[i] == index)
+            {
+                removeIndex = i;
+            }
+            else if (LobbyResources.playerIndexforSprite[i] > index)
+            {
+                LobbyResources.playerIndexforSprite[i]--;
+            }
+        }
+        if (removeIndex != -1)
+        {
+            LobbyResources.playerIndexforSprite.RemoveAt(removeIndex);
+            LobbyResources.playerSprites.RemoveAt(removeIndex);
+            updateSpritesClientRpc(LobbyResources.playerSprites, LobbyResources.playerIndexforSprite, LobbyResources.playerNames);
+        }
+        updateNamesClientRpc(LobbyResources.playerNames);
+        updateReadyStateClientRpc(LobbyResources.playerReadyState);
+        Debug.Log(Time.time);
+    }
+
     [ClientRpc]
     public void updateReadyStateClientRpc(List<bool> playerReadyState)
     {
@@ -210,10 +278,16 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                     GetComponent<TextMeshProUGUI>().color = new Color(1f, 1f, 1f);
             }
         }
+        for (int i = playerReadyState.Count; i < 3; i++)
+        {
+            readyScene.transform.GetChild(i + 3).GetChild(0).
+                    GetComponent<TextMeshProUGUI>().color = new Color(1f, 1f, 1f);
+        }
+
     }
 
     [ClientRpc]
-    public void updateSpritesClientRpc(List<int> playerSprites, List<int> playerIndex)
+    public void updateSpritesClientRpc(List<int> playerSprites, List<int> playerIndex, List<string> playerNames)
     {
         readyScene = GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(1).gameObject;
         players = Resources.LoadAll<GameObject>("SpawnablePrefabs/");
@@ -226,6 +300,17 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             readyScene.transform.GetChild(playerIndex[i] + 3).GetChild(1).GetComponent<Image>().color =
                 new Color(255f, 255f, 255f, 255f);
         }
+        for (int i = playerSprites.Count; i < 3; i++)
+        {
+            if (i >= playerNames.Count)
+            {
+                readyScene.transform.GetChild(i + 3).GetChild(1).GetComponent<RectTransform>().sizeDelta =
+                new Vector2(60, 60);
+                readyScene.transform.GetChild(i + 3).GetChild(1).GetComponent<Image>().color =
+                    new Color(255f, 255f, 255f, 0f);
+            }
+            
+        }
     }
 
     [ClientRpc]
@@ -237,5 +322,11 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             readyScene.transform.GetChild(i + 3).GetChild(0).GetComponent<TextMeshProUGUI>().
                 SetText(playerNames[i]);
         }
+        for (int i = playerNames.Count; i < 3; i++)
+        {
+            readyScene.transform.GetChild(i + 3).GetChild(0).GetComponent<TextMeshProUGUI>().
+                SetText("");
+        }
     }
+
 }

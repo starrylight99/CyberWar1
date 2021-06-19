@@ -8,7 +8,6 @@ public static class LobbyResources
     public static List<int> playerSprites = new List<int>();
     public static List<int> playerIndexforSprite = new List<int>();
     public static List<bool> playerReadyState = new List<bool>();
-
 }
 
 
