@@ -22,14 +22,11 @@ public class StartComputer : NetworkBehaviour
         {
             Debug.Log("Inside");
             player.transform.GetChild(0).GetComponent<AudioListener>().enabled = false;
-            player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
+            player.GetComponent<Rigidbody2D>().constraints = 
+                RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
             player.GetComponent<Rigidbody2D>().freezeRotation = true;
             SceneManager.LoadScene("ChooseComputerGame", LoadSceneMode.Additive);
-            
-        }
-        else
-        {
-            Debug.Log("Please go in closer");
+            player.GetComponent<States>().playingMinigame = true;
         }
     }
 

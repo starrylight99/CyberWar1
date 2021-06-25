@@ -9,6 +9,8 @@ TagManager:
   - GameHandler
   - Lobby
   - NetworkManager
+  - RoomPlayer
+  - UI
   layers:
   - Default
   - TransparentFX

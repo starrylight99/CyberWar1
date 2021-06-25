@@ -29,4 +29,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/OfflineScene.unity
     guid: 9cd7f46c45f10a54aaaf58ffa1cddc60
+  - enabled: 1
+    path: Assets/Scenes/FinalBattle.unity
+    guid: b26719fea1a21a6408a45268ba86bcbb
   m_configObjects: {}

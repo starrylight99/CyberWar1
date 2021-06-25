@@ -18,7 +18,6 @@ public class SubstQn : MonoBehaviour
     GameObject part1;
     GameObject part2;
     GameObject player;
-    GameObject mainCamera;
     public int numHints;
     string key_arr = "";
     string shuffle = "abcdefghijklmnopqrstuvwxyz";
@@ -38,7 +37,6 @@ public class SubstQn : MonoBehaviour
                 player = players;
             }
         }
-        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").gameObject;
         inst.SetActive(true);
         part1.SetActive(false);
         part2.SetActive(false);
@@ -134,6 +132,7 @@ public class SubstQn : MonoBehaviour
         player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+        player.GetComponent<States>().playingMinigame = false;
         SceneManager.UnloadSceneAsync("IntelGameScene");
     }
 

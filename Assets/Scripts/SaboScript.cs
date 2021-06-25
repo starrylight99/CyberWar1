@@ -35,7 +35,6 @@ public class SaboScript : MonoBehaviour
     GameObject inst2;
     GameObject game;
     GameObject player;
-    GameObject mainCamera;
     string displayText = "";
     string answer = "";
     public int numGames;
@@ -59,7 +58,6 @@ public class SaboScript : MonoBehaviour
                 player = players;
             }
         }
-        mainCamera = GameObject.FindGameObjectWithTag("MainCamera").gameObject;
         inst1.SetActive(true);
         inst2.SetActive(false);
         game.SetActive(false);
@@ -267,6 +265,7 @@ public class SaboScript : MonoBehaviour
         player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
         player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+        player.GetComponent<States>().playingMinigame = false;
         SceneManager.UnloadSceneAsync("SabotageGameScene");
     }
 

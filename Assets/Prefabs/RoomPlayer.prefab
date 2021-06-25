@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: -8868763514212328737}
   m_Layer: 0
   m_Name: RoomPlayer
-  m_TagString: Untagged
+  m_TagString: RoomPlayer
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -67,4 +67,5 @@ MonoBehaviour:
   readyToBegin: 0
   index: 0
   spriteIndex: 0
-  networkLobbyManager: {fileID: 7032829513360160842, guid: f68ebddac858404478c8b409a58b9765, type: 3}
+  isAttack: 0
+  teamIndex: 0
