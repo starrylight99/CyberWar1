@@ -13,8 +13,11 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] GameObject message;
     public bool isAttack;
     public bool choseTeam = false;
+    GameObject settings;
 
     //[SerializeField] NetworkLobbyManagerCustomised networkLobbyManager;
+
+
     public void Host()
     {
         if (!choseTeam)
@@ -46,7 +49,10 @@ public class LobbyUI : MonoBehaviour
             GetComponent<NetworkLobbyManagerCustomised>().networkAddress = joinMatchInput.text;
         GameObject.FindGameObjectWithTag("NetworkManager").
             GetComponent<NetworkLobbyManagerCustomised>().StartClient();
-        
+        //settings = GameObject.Find("SETTINGS");
+        //settings.GetComponent<Settings>().playerName = displayName.text;
+        //GameObject.FindGameObjectWithTag("NetworkManager").
+        //    GetComponent<PlayFabClient>().Authenticate();
     }
 
     public void Attack()

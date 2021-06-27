@@ -88,19 +88,25 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     private void Quit()
     {
         // Quit the game. Stopping host stops the game for all clients
-        if (index == 0)
+        //if (index == 0)
+        //{
+        //    GameObject.FindGameObjectWithTag("NetworkManager").
+        //        GetComponent<NetworkLobbyManagerCustomised>().StopHost(); //for now?
+        //}
+        //else
+        //{
+        //    if (isLocalPlayer)
+        //    {
+        //        // Start coroutine is needed as cmdremoveentry does not complete instantly at times
+        //        CmdRemoveEntry(index, isAttack, teamIndex);
+        //        StartCoroutine("removeClient");
+        //    }
+        //}
+        if (isLocalPlayer)
         {
-            GameObject.FindGameObjectWithTag("NetworkManager").
-                GetComponent<NetworkLobbyManagerCustomised>().StopHost(); //for now?
-        }
-        else
-        {
-            if (isLocalPlayer)
-            {
-                // Start coroutine is needed as cmdremoveentry does not complete instantly at times
-                CmdRemoveEntry(index, isAttack, teamIndex);
-                StartCoroutine("removeClient");
-            }
+            // Start coroutine is needed as cmdremoveentry does not complete instantly at times
+            CmdRemoveEntry(index, isAttack, teamIndex);
+            StartCoroutine("removeClient");
         }
     }
 
@@ -366,6 +372,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     [Command]
     void CmdRemoveEntry(int index, bool isAtk, int teamIndex)
     {
+        Debug.Log("Removing Entry");
         LobbyResources.playerTeamAttack.RemoveAt(index);
         if (isAtk)
         {

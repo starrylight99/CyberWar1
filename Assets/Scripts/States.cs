@@ -22,6 +22,7 @@ public class States : NetworkBehaviour
     bool timeIsRunning;
     public bool playingMinigame = false;
     public Vector3 spawnPos;
+    public int teamIndex;
 
     public override void OnStartLocalPlayer()
     {
@@ -29,6 +30,17 @@ public class States : NetworkBehaviour
         CmdSetName();
         totalTime = (float) startTime;
         timeIsRunning = true;
+        
+        if (isAttack)
+        {
+            spawnPos = GameObject.FindGameObjectWithTag("NetworkManager").transform.
+                GetChild(1).GetChild(teamIndex).position;
+        }
+        else
+        {
+            spawnPos = GameObject.FindGameObjectWithTag("NetworkManager").transform.
+                GetChild(2).GetChild(teamIndex).position;
+        }
     }
 
 
@@ -98,7 +110,5 @@ public class States : NetworkBehaviour
             
         }
     }
-
-    
     
 }

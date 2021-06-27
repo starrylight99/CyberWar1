@@ -94,14 +94,18 @@ m_PackageAssets:
         - 5.0.3
         - 5.0.4
         - 5.0.5
+        - 5.0.6
         - 6.0.0-pre.1
         - 6.0.0-pre.2
         - 6.0.1
         - 6.0.3
+        - 6.0.4
+        - 7.0.0-pre.2
         compatible:
         - 5.0.4
         - 5.0.5
-        verified: 5.0.5
+        - 5.0.6
+        verified: 5.0.6
       dependencies:
       - name: com.unity.2d.common
         version: 4.0.3
@@ -615,10 +619,12 @@ m_PackageAssets:
         - 1.1.22
         - 1.1.24
         - 1.1.26
+        - 1.1.27
         compatible:
         - 1.1.24
         - 1.1.26
-        verified: 1.1.26
+        - 1.1.27
+        verified: 1.1.27
       dependencies:
       - name: com.unity.ext.nunit
         version: 1.0.6
@@ -2920,6 +2926,7 @@ m_PackageAssets:
         - 5.0.0-pre.2
         - 5.0.0
         - 6.0.0-pre.2
+        - 6.0.0-pre.3
         compatible:
         - 4.0.2
         - 4.0.3
