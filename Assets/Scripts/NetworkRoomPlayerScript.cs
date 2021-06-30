@@ -18,6 +18,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     public int spriteIndex;
     public string displayName { get; set; } = null;
     public bool isAttack;
+    
     [SyncVar]
     public int teamIndex;
     private int _winGame = 0;

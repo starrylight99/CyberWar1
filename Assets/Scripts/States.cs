@@ -11,8 +11,8 @@ public class States : NetworkBehaviour
     public bool winIntelGame = false;
     [SerializeField]
     public bool winSaboGame = false;
-    [SerializeField]
-    public int resourceInventory = 0;
+    [SyncVar]
+    public int teamResources;
     [SyncVar]
     public string displayName;
     [SyncVar]
@@ -22,6 +22,9 @@ public class States : NetworkBehaviour
     bool timeIsRunning;
     public bool playingMinigame = false;
     public Vector3 spawnPos;
+    RoomResources roomResources;
+    GameHandler gameHandlerComponent;
+    MiningAI miningAI;
 
     public override void OnStartLocalPlayer()
     {
@@ -98,7 +101,72 @@ public class States : NetworkBehaviour
             
         }
     }
+    /* [Command]
+    public void SetResourcesServer(int amount, bool isAtk){
+        roomResources = GameObject.FindGameObjectWithTag("RoomResources").GetComponent<RoomResources>();
+        if (isAtk) {
+            roomResources.atkTeamResources = amount;
+        } else {
+            roomResources.defTeamResources = amount;
+        }
+        Debug.Log("Server atk: " + roomResources.atkTeamResources);
+        Debug.Log("Server def: " + roomResources.defTeamResources);
+        Debug.Log("Server resource: " + roomResources.atkTeamResources);
+        SetResourcesClient(amount,isAtk);
+    }
 
-    
-    
+    [ClientRpc]
+    public void SetResourcesClient(int amount, bool isAtk){
+        //Debug.Log("Recieved SetResourcesClient");
+        roomResources = GameObject.FindGameObjectWithTag("RoomResources").GetComponent<RoomResources>();
+        if (isAtk) {
+            roomResources.atkTeamResources = amount;
+        } else {
+            roomResources.defTeamResources = amount;
+        }
+        //Debug.Log("Client atk: " + roomResources.atkTeamResources);
+        //Debug.Log("Client def: " + roomResources.defTeamResources);
+        amount = this.isAttack ? roomResources.atkTeamResources : roomResources.defTeamResources;
+        GameObject.FindGameObjectWithTag("UI").GetComponent<GameResourcesUI>().UpdateResource(amount);
+        //Debug.Log("Client resource : " + roomResources.atkTeamResources);
+    } */
+
+    [Command]
+    public void SetResourceNodeServer(int serial, bool isAtk){
+        GameObject[] arr = GameObject.FindGameObjectsWithTag("Mining");
+        foreach (GameObject mining in arr)
+        {
+            if (mining.GetComponent<TeamTag>().isAttack == isAtk){
+                miningAI = mining.transform.Find("Miner").GetComponent<MiningAI>();
+            }
+        }
+        arr = GameObject.FindGameObjectsWithTag("GameHandler");
+        foreach (GameObject gameHandler in arr)
+        {
+            if (gameHandler.GetComponent<TeamTag>().isAttack == isAtk){
+                gameHandlerComponent = gameHandler.GetComponent<GameHandler>();
+            }
+        }
+        miningAI.SetResourceNode(gameHandlerComponent.resourceNodeList[serial]);
+        SetResourceNodeClient(serial,isAtk);
+    }
+
+    [ClientRpc]
+    public void SetResourceNodeClient(int serial, bool isAtk){
+        GameObject[] arr = GameObject.FindGameObjectsWithTag("Mining");
+        foreach (GameObject mining in arr)
+        {
+            if (mining.GetComponent<TeamTag>().isAttack == isAtk){
+                miningAI = mining.transform.Find("Miner").GetComponent<MiningAI>();
+            }
+        }
+        arr = GameObject.FindGameObjectsWithTag("GameHandler");
+        foreach (GameObject gameHandler in arr)
+        {
+            if (gameHandler.GetComponent<TeamTag>().isAttack == isAtk){
+                gameHandlerComponent = gameHandler.GetComponent<GameHandler>();
+            }
+        }
+        miningAI.SetResourceNode(gameHandlerComponent.resourceNodeList[serial]);
+    }
 }

@@ -12,6 +12,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
     public bool isAttack;
     public string playerName;
     public int teamIndex;
+    public int roomPlayTime = 10;
     GameObject[] players;
 
     public override void OnRoomStartServer()
@@ -115,7 +116,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             titleScreen.transform.GetChild(1).GetChild(1).GetComponent<TMP_InputField>().interactable = true;
             titleScreen.transform.GetChild(1).GetChild(2).GetComponent<Button>().interactable = true;
         }
-        
     }
 
     public override void OnRoomServerSceneChanged(string sceneName)
@@ -126,7 +126,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         if (sceneName.Contains("RoomScene"))
         {
             //For Testing! Using 10s to change to final scene now
-            StartCoroutine(CountdownToFinale(10));
+            StartCoroutine(CountdownToFinale(roomPlayTime));
         }
     }
 
@@ -143,5 +143,4 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         }
         ServerChangeScene("FinalBattle");
     }
-
 }

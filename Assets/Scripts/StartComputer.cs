@@ -29,6 +29,4 @@ public class StartComputer : NetworkBehaviour
             player.GetComponent<States>().playingMinigame = true;
         }
     }
-
-    
 }

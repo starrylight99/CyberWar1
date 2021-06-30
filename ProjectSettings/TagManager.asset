@@ -11,6 +11,10 @@ TagManager:
   - NetworkManager
   - RoomPlayer
   - UI
+  - RoomResources
+  - ResourceNode
+  - Mining
+  - MiningCamera
   layers:
   - Default
   - TransparentFX

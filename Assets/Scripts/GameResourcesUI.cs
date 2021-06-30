@@ -1,40 +1,42 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-public class GameResourcesUI : MonoBehaviour {
-    public GameObject player;
-    private bool updatable;
-    private void Awake() {
-        GameObject.FindGameObjectWithTag("GameHandler").transform.position = Vector3.zero;
-        player = GameObject.FindGameObjectWithTag("Player");
-        player.SetActive(false);
-        updatable = true;
-        GameObject.FindGameObjectWithTag("Button").GetComponent<Button>().onClick.AddListener(back);
+using Mirror;
+public class GameResourcesUI : NetworkBehaviour {
+    private States player;
+
+    [SerializeField] 
+    TextMeshProUGUI resourceTMP;
+    static int teamResources;
+    
+    private void Start() {
+        //GameObject.FindGameObjectWithTag("Button").GetComponent<Button>().onClick.AddListener(back);
         GameResources.OnResourceAmountChanged += delegate (object sender, EventArgs e) {
-            UpdateResourceTextObject();
+            /* player = NetworkClient.localPlayer.gameObject.GetComponent<States>();
+            teamResources = GameResources.GetGoldAmount(player.isAttack); */
+            //Debug.Log("GameResourcesUI: " + GameResources.GetGoldAmount(player.isAttack));
+            //player.SetResourcesServer(teamResources, player.isAttack);
+            //erverCommandUpdateResource();
+            ServerCommandUpdateResource();
         };
-        UpdateResourceTextObject();
+        teamResources = 0;
+        resourceTMP.SetText("Burgers: 0");
     }
 
-    private void back()
-    {
-        player.GetComponent<States>().resourceInventory = GameResources.GetGoldAmount();
-        GameObject.FindGameObjectWithTag("GameHandler").transform.position = new Vector3(1000f, 1000f, 1000f);
-        updatable = false;
-        player.SetActive(true);
-        SceneManager.LoadScene("RoomScene");
-
+    [Server]
+    private void ServerCommandUpdateResource(){
+        UpdateResource(GameResources.atkResourceAmount, GameResources.defResourceAmount);
     }
-
-    private void UpdateResourceTextObject() {
-        Debug.Log("Here: "+ GameResources.GetGoldAmount().ToString());
-        if (updatable)
-            transform.GetChild(0).GetComponent<Text>().text = "Burgers: " + GameResources.GetGoldAmount();
-
+    [ClientRpc]
+    public void UpdateResource(int atk, int def) {
+        GameResources.atkResourceAmount = atk;
+        GameResources.defResourceAmount = def;
+        player = NetworkClient.localPlayer.gameObject.GetComponent<States>();
+        teamResources = GameResources.GetGoldAmount(player.isAttack);
+        resourceTMP.SetText("Burgers: " + teamResources);
     }
-
-   
 }

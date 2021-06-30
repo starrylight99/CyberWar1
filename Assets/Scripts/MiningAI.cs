@@ -2,8 +2,9 @@ using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
+using Mirror;
 
-public class MiningAI : MonoBehaviour {
+public class MiningAI : NetworkBehaviour {
     private enum State {
         Idle,
         MovingToResourceNode,
@@ -21,7 +22,9 @@ public class MiningAI : MonoBehaviour {
     float sqrMag,currSqrMag;
     TextMesh inventoryTextMesh;
 
-    private void Awake() {
+    public bool isAttack;
+
+    void Start() {
         rb = GetComponent<Rigidbody2D>();
         idle = true;
         desiredPosition = rb.transform.position;
@@ -31,7 +34,7 @@ public class MiningAI : MonoBehaviour {
         UpdateInventoryText();
     }
 
-    private async void Update() {
+    async void Update() {
         //Debug.Log(state);
         currSqrMag = (desiredPosition - rb.position).sqrMagnitude;
         if (currSqrMag > sqrMag){
@@ -55,7 +58,14 @@ public class MiningAI : MonoBehaviour {
         case State.GatheringResources:
             if (idle) {
                 if (resourceInventoryAmount >= 3) {
-                    storageTransform = GameHandler.GetStorage_Static();
+                    GameObject[] arr = GameObject.FindGameObjectsWithTag("GameHandler");
+                    foreach (GameObject gh in arr)
+                    {
+                        if (isAttack == gh.GetComponent<TeamTag>().isAttack){
+                            storageTransform = gh.GetComponent<GameHandler>().GetStorage();
+                        }
+                    }
+                    //storageTransform = GameHandler.GetStorage_Static();
                     state = State.MovingToStorage;
                 } else {
                     await playAnimationMine(() => {
@@ -68,19 +78,11 @@ public class MiningAI : MonoBehaviour {
             break;
         case State.MovingToStorage:
             if (idle) {
-                    storageTransform = GameHandler.GetStorage_Static();
+                //storageTransform = GameHandler.GetStorage_Static();
 
-                    StartCoroutine(moveTo(storageTransform.position, () => {
-                    if (GameObject.Find("Resources"))
-                        {
-                            GameResources.AddGoldAmount(resourceInventoryAmount, true);
-                        }
-                        else
-                        {
-                            GameResources.AddGoldAmount(resourceInventoryAmount, false);
-                        }
-                    
-                    Debug.Log(GameResources.GetGoldAmount());
+                StartCoroutine(moveTo(storageTransform.position, () => {
+                    AddGoldAmountServer(resourceInventoryAmount, isAttack);
+                    //GameResources.AddGoldAmount(resourceInventoryAmount, isAttack);
                     resourceInventoryAmount = 0;
                     UpdateInventoryText();
                     state = State.Idle;
@@ -89,7 +91,7 @@ public class MiningAI : MonoBehaviour {
             break;
         }
     }
-    private void FixedUpdate() {
+    void FixedUpdate() {
         rb.velocity = desiredVelocity;
     }
     public bool isIdle(){
@@ -121,15 +123,17 @@ public class MiningAI : MonoBehaviour {
             {
                 inventoryTextMesh.text = "";
             }
-        }catch (MissingReferenceException)
+        } catch (MissingReferenceException)
         {
             Debug.Log("Destroyed");
         } 
-            
-        
-        
     }
     public void SetResourceNode(ResourceNode resourceNode) {
         this.resourceNode = resourceNode;
+    }
+
+    [Server]
+    private void AddGoldAmountServer(int value, bool isAtk){
+        GameResources.AddGoldAmount(value, isAttack);
     }
 }

@@ -4,44 +4,32 @@ using System;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using Mirror;
+using static ResourceNode;
 
-public class GameHandler : MonoBehaviour {
+public class GameHandler : NetworkBehaviour {
     private static GameHandler instance;
     [SerializeField] private Transform resourceNode1Transform;
     [SerializeField] private Transform resourceNode2Transform;
     [SerializeField] private Transform resourceNode3Transform;
     [SerializeField] private Transform storageTransform;
     [SerializeField] private MiningAI miningAI;
-    private List<ResourceNode> resourceNodeList;
-    GameObject player;
+    public List<ResourceNode> resourceNodeList;
+    States player;
     private static GameObject objInstance;
 
     private void Awake() {
-        
-        
-        if (objInstance == null)
-        {
-            objInstance = gameObject;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            DestroyImmediate(gameObject);
-            return;
-        }
         instance = this;
         resourceNodeList = new List<ResourceNode>();
-        resourceNodeList.Add(new ResourceNode(resourceNode1Transform));
-        resourceNodeList.Add(new ResourceNode(resourceNode2Transform));
-        resourceNodeList.Add(new ResourceNode(resourceNode3Transform));
+        resourceNodeList.Add(new ResourceNode(resourceNode1Transform,0));
+        resourceNodeList.Add(new ResourceNode(resourceNode2Transform,1));
+        resourceNodeList.Add(new ResourceNode(resourceNode3Transform,2));
         //Debug.Log(resourceNodeList[1].GetPosition());
-        ResourceNode.OnResourceNodeClicked += ResourceNode_OnResourceNodeClicked;
+        //ResourceNode.OnResourceNodeClicked += ResourceNode_OnResourceNodeClicked;
+        ResourceNode.OnResourceNodeClicked += GetPlayerResourceNode;
     }
 
     
-
-  
-
     private ResourceNode GetResourceNode() {
         List<ResourceNode> tmpResourceNodeList = new List<ResourceNode>(resourceNodeList);
         for (int i = 0; i < tmpResourceNodeList.Count; i++) {
@@ -56,15 +44,20 @@ public class GameHandler : MonoBehaviour {
             return null;
         }
     }
-    private void ResourceNode_OnResourceNodeClicked(object sender, EventArgs e) {
+    private void GetPlayerResourceNode(object sender, EventArgs e){
+        ResourceNode resourceNode = sender as ResourceNode;
+        player = NetworkClient.localPlayer.gameObject.GetComponent<States>();
+        player.SetResourceNodeServer(resourceNode.serialNumber, player.isAttack);
+    }
+    /* public void ResourceNode_OnResourceNodeClicked(object sender, EventArgs e) {
         ResourceNode resourceNode = sender as ResourceNode;
         miningAI.SetResourceNode(resourceNode);
-    }
+    } */
     public static ResourceNode GetResourceNode_Static() {
         return instance.GetResourceNode();
     }
     
-    private Transform GetStorage() {
+    public Transform GetStorage() {
         return storageTransform;
     }
     

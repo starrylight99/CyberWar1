@@ -380,18 +380,19 @@ MonoBehaviour:
   serverTickRate: 30
   serverBatching: 1
   serverBatchInterval: 0
-  offlineScene: Assets/Scenes/OfflineScene.unity
-  onlineScene: Assets/Scenes/RoomScene.unity
+  offlineScene: Assets/Scenes/Lobby.unity
+  onlineScene: Assets/Scenes/Lobby.unity
   transport: {fileID: 7032829513360160843}
   networkAddress: localhost
-  maxConnections: 100
+  maxConnections: 3
   disconnectInactiveConnections: 0
   disconnectInactiveTimeout: 60
   authenticator: {fileID: 0}
   playerPrefab: {fileID: 7307375327221808043, guid: 5101dfd00a32caf4e80680a070dffde2, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 1
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 1655302383690345319, guid: a452fe1ee17d40f488f53032e72090b9, type: 3}
   showRoomGUI: 1
   minPlayers: 1
   roomPlayerPrefab: {fileID: -8868763514212328737, guid: bf53238b7d5124d46a0ca56afeaabb70, type: 3}
@@ -403,6 +404,7 @@ MonoBehaviour:
   isAttack: 0
   playerName: 
   teamIndex: 0
+  roomPlayTime: 40
 --- !u!114 &7032829513360160843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,7 +420,7 @@ MonoBehaviour:
   Port: 7777
   NoDelay: 1
   Interval: 10
-  Timeout: 10000
+  Timeout: 1000000
   FastResend: 2
   CongestionWindow: 0
   SendWindowSize: 4096

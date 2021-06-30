@@ -9,6 +9,7 @@ public class PlayGame : MonoBehaviour
 {
     GameObject PlaySaboGame;
     GameObject PlayIntelGame;
+    //GameObject PlayMiningGame;
     GameObject player;
     // Start is called before the first frame update
     void Start()
@@ -20,6 +21,7 @@ public class PlayGame : MonoBehaviour
         PlayIntelGame = transform.GetChild(1).gameObject;
         PlaySaboGame.GetComponent<Button>().onClick.AddListener(playSabo);
         PlayIntelGame.GetComponent<Button>().onClick.AddListener(playIntel);
+        //PlayMiningGame.GetComponent<Button>().onClick.AddListener(playMining);
         Debug.Log("started");
     }
 
@@ -34,7 +36,11 @@ public class PlayGame : MonoBehaviour
         Debug.Log("clickedSabo");
         SceneManager.LoadSceneAsync("SabotageGameScene", LoadSceneMode.Additive);
     }
-
+    /* private void playMining()
+    {
+        Debug.Log("clicked Mining");
+        SceneManager.LoadSceneAsync("MiningScene", LoadSceneMode.Additive);
+    } */
     // Update is called once per frame
     void Update()
     {

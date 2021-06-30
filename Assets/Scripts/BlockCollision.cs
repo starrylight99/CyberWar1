@@ -11,7 +11,5 @@ public class BlockCollision : MonoBehaviour
     void Start()
     {
         Physics2D.IgnoreCollision(playerCollider, playerBlockCollider, true);
-    }
-
-    
+    } 
 }
