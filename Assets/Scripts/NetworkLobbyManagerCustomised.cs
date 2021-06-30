@@ -146,8 +146,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         }
         ServerChangeScene("FinalBattle");
     }
-<<<<<<< HEAD
-=======
 
     public override void OnStartServer()
     {
@@ -155,5 +153,4 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         Debug.Log("Starting Server");
     }
 
->>>>>>> 823616a67cb2ff9f92e7d6389419fa82b7a84d8c
 }

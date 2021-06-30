@@ -22,13 +22,10 @@ public class States : NetworkBehaviour
     bool timeIsRunning;
     public bool playingMinigame = false;
     public Vector3 spawnPos;
-<<<<<<< HEAD
     RoomResources roomResources;
     GameHandler gameHandlerComponent;
     MiningAI miningAI;
-=======
     public int teamIndex;
->>>>>>> 823616a67cb2ff9f92e7d6389419fa82b7a84d8c
 
     public override void OnStartLocalPlayer()
     {
@@ -116,7 +113,6 @@ public class States : NetworkBehaviour
             
         }
     }
-<<<<<<< HEAD
     /* [Command]
     public void SetResourcesServer(int amount, bool isAtk){
         roomResources = GameObject.FindGameObjectWithTag("RoomResources").GetComponent<RoomResources>();
@@ -185,7 +181,4 @@ public class States : NetworkBehaviour
         }
         miningAI.SetResourceNode(gameHandlerComponent.resourceNodeList[serial]);
     }
-=======
-    
->>>>>>> 823616a67cb2ff9f92e7d6389419fa82b7a84d8c
 }
