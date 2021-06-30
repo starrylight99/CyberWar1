@@ -130,6 +130,8 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         {
             //For Testing! Using 10s to change to final scene now
             StartCoroutine(CountdownToFinale(roomPlayTime));
+        } else if (sceneName.Contains("FinalBattle")){
+            NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").GetComponent<Camera>().enabled = true;
         }
     }
 

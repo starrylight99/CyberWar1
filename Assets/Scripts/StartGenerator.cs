@@ -29,6 +29,11 @@ public class StartGenerator : MonoBehaviour
             player.GetComponent<Rigidbody2D>().constraints = originalConstraints;
         });
         backButton.SetActive(false);
+        miningCams = GameObject.FindGameObjectsWithTag("MiningCamera");
+        foreach (GameObject cam in miningCams)
+        {
+            cam.GetComponent<Camera>().enabled = false;
+        }
     }
     void OnMouseDown()
     {
