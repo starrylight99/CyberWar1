@@ -29,6 +29,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         base.OnRoomStartClient();
         if (SceneManager.GetActiveScene().name == "Lobby")
         {
+            Debug.Log("Starting Client");
             playerName = GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(0).
                 GetChild(0).GetComponentInChildren<TMP_InputField>().text;
             isAttack = GameObject.FindGameObjectWithTag("Lobby").GetComponent<LobbyUI>().isAttack;
@@ -72,6 +73,8 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
                 LobbyResources.playerNamesDef[teamIndex];
             player.GetComponent<States>().spawnPos = transform.GetChild(2).GetChild(teamIndex).position;
         }
+        player.GetComponent<States>().teamIndex = teamIndex;
+        Debug.Log(player.GetComponent<States>().spawnPos);
         player.GetComponent<States>().isAttack = LobbyResources.playerTeamAttack[index];
         return player;
     }
@@ -143,4 +146,14 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         }
         ServerChangeScene("FinalBattle");
     }
+<<<<<<< HEAD
+=======
+
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        Debug.Log("Starting Server");
+    }
+
+>>>>>>> 823616a67cb2ff9f92e7d6389419fa82b7a84d8c
 }
