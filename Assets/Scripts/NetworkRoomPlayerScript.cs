@@ -36,6 +36,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                     // if the player wins, they will have the victory screen and clicking button will stop client/host
                     if (SceneManager.GetActiveScene().name == "FinalBattle")
                     {
+                        GameObject.FindGameObjectWithTag("Flag").SetActive(false);
                         GameObject endscreen = GameObject.FindGameObjectWithTag("UI").transform.GetChild(0).gameObject;
                         endscreen.SetActive(true);
                         GameObject.FindGameObjectWithTag("UI").transform.GetChild(1).gameObject.SetActive(false);
@@ -47,6 +48,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                     // if the player wins, they will have the defeat screen and clicking button will stop client/host
                     if (SceneManager.GetActiveScene().name == "FinalBattle")
                     {
+                        GameObject.FindGameObjectWithTag("Flag").SetActive(false);
                         GameObject endscreen = GameObject.FindGameObjectWithTag("UI").transform.GetChild(1).gameObject;
                         endscreen.SetActive(true);
                         GameObject.FindGameObjectWithTag("UI").transform.GetChild(0).gameObject.SetActive(false);

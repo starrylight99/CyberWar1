@@ -416,6 +416,7 @@ GameObject:
   - component: {fileID: 2471590946877729072}
   - component: {fileID: 1670704631353680910}
   - component: {fileID: 3998879832204739477}
+  - component: {fileID: 5761468550886528834}
   m_Layer: 8
   m_Name: MalePlayer
   m_TagString: Player
@@ -633,12 +634,13 @@ MonoBehaviour:
   syncInterval: 0.1
   winIntelGame: 0
   winSaboGame: 0
-  resourceInventory: 0
+  teamResources: 0
   displayName: 
   isAttack: 0
   startTime: 0
   playingMinigame: 0
   spawnPos: {x: 0, y: 0, z: 0}
+  teamIndex: 0
 --- !u!114 &2471590946877729072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -677,3 +679,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7307375327221808043}
   m_CullTransparentMesh: 1
+--- !u!114 &5761468550886528834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7307375327221808043}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ff817e935dbd4846a171ba416105c68, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1

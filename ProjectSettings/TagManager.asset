@@ -15,6 +15,7 @@ TagManager:
   - ResourceNode
   - Mining
   - MiningCamera
+  - Flag
   layers:
   - Default
   - TransparentFX
