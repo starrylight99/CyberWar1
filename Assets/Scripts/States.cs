@@ -89,6 +89,7 @@ public class States : NetworkBehaviour
             }
         }
     }
+
     [Command]
     void CmdSetName()
     {

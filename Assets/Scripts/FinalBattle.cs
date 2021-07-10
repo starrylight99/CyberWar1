@@ -8,7 +8,6 @@ public class FinalBattle : MonoBehaviour
 {
     float timer;
     [SerializeField] TextMeshProUGUI showTimer;
-    bool playable = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,14 +16,8 @@ public class FinalBattle : MonoBehaviour
         {
             player.transform.position = player.GetComponent<States>().spawnPos;
         }
-        timer = 60f;
+        timer = 120f;
         DisplayText(timer);
-        Invoke(nameof(Play), 5f);
-    }
-
-    private void Play()
-    {
-        playable = true;
     }
 
     private void DisplayText(float timer)

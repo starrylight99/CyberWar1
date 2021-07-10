@@ -88,6 +88,61 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
         readyScene.transform.GetChild(10).GetComponent<Button>().onClick.AddListener(Quit);
     }
 
+    void Update()
+    {
+        if (isLocalPlayer && SceneManager.GetActiveScene().name.Contains("FinalBattle"))
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 30);
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(pos);
+                Debug.Log(mousePos);
+                CmdSpawnTrap(mousePos);
+            }
+            else if (Input.GetKeyDown(KeyCode.Space))
+            {
+                Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 30);
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(pos);
+                Vector3 playerPos = Camera.main.ScreenToWorldPoint(Vector3.zero);
+                Vector3 dir = (playerPos - mousePos).normalized;
+                float angle = Mathf.Atan2(dir.y, dir.x) * 180 / Mathf.PI;
+                if ((dir.x < 0) && (dir.y < 0))
+                {
+                    angle += 270;
+                }
+                else
+                {
+                    angle -= 90;
+                }
+
+                CmdSpawnKnockback(new Vector3(playerPos.x - (20 * dir.x), playerPos.y - (20 * dir.y), 0),
+                    angle, -dir, isAttack);
+            }
+        }
+    }
+
+    
+
+    [Command]
+    void CmdSpawnKnockback(Vector3 pos, float angle, Vector2 dir, bool isAttack)
+    {
+        GameObject trap = Resources.Load<GameObject>("SpawnableObstacles/WindSlash");
+        Quaternion rotate = Quaternion.identity;
+        rotate.eulerAngles = new Vector3(0, 0, angle);
+        GameObject knockback = Instantiate(trap, pos, rotate);
+        knockback.GetComponent<Rigidbody2D>().freezeRotation = true;
+        knockback.GetComponent<KnockBackObstacle>().isAttack = isAttack;
+        knockback.GetComponent<KnockBackObstacle>().dir = dir;
+        NetworkServer.Spawn(knockback);
+    }
+
+    [Command]
+    void CmdSpawnTrap(Vector3 mousePos)
+    {
+        GameObject trap = Resources.Load<GameObject>("SpawnableObstacles/SlowTrap");
+        NetworkServer.Spawn(Instantiate(trap, mousePos, Quaternion.identity));
+    }
+
     private void Quit()
     {
         // Quit the game. Stopping host stops the game for all clients

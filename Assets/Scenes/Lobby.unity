@@ -1277,16 +1277,24 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 440610885917431266, guid: 4fc37d91e97c7194ca1822215d2e71d3, type: 3}
       propertyPath: roomPlayTime
-      value: 40
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 440610885917431266, guid: 4fc37d91e97c7194ca1822215d2e71d3, type: 3}
       propertyPath: spawnPrefabs.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 440610885917431266, guid: 4fc37d91e97c7194ca1822215d2e71d3, type: 3}
       propertyPath: spawnPrefabs.Array.data[0]
       value: 
       objectReference: {fileID: 1655302383690345319, guid: a452fe1ee17d40f488f53032e72090b9, type: 3}
+    - target: {fileID: 440610885917431266, guid: 4fc37d91e97c7194ca1822215d2e71d3, type: 3}
+      propertyPath: spawnPrefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 6071667269924904534, guid: 5626965b88c515848928fa16fc8e0991, type: 3}
+    - target: {fileID: 440610885917431266, guid: 4fc37d91e97c7194ca1822215d2e71d3, type: 3}
+      propertyPath: spawnPrefabs.Array.data[2]
+      value: 
+      objectReference: {fileID: 499544256341236811, guid: 4dbc9bad76211de43ac4f5c3383c8b15, type: 3}
     - target: {fileID: 440610885917431267, guid: 4fc37d91e97c7194ca1822215d2e71d3, type: 3}
       propertyPath: showGUI
       value: 0

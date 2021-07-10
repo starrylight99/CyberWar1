@@ -46,11 +46,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         // on States script of the player GameObject
         int spriteIndex = roomPlayer.GetComponent<NetworkRoomPlayerScript>().spriteIndex;
         int index = roomPlayer.GetComponent<NetworkRoomPlayerScript>().index;
-        Vector3 spawnPos = transform.GetChild(0).GetChild(index).position;
-        if (!LobbyResources.playerTeamAttack[index])
-        {
-            spawnPos = new Vector3(spawnPos.x + 225, spawnPos.y, spawnPos.z);
-        }
         int teamIndex = 0;
         for (int i = 0; i < index; i++)
         {
@@ -59,6 +54,12 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
                 teamIndex += 1;
             }
         }
+        Vector3 spawnPos = transform.GetChild(0).GetChild(teamIndex).position;
+        if (!LobbyResources.playerTeamAttack[index])
+        {
+            spawnPos = new Vector3(spawnPos.x + 225, spawnPos.y, spawnPos.z);
+        }
+        
         GameObject player = Instantiate(players[spriteIndex], spawnPos, Quaternion.identity);
         player.GetComponent<States>().startTime = LobbyResources.timer;
         if (LobbyResources.playerTeamAttack[index])
@@ -74,7 +75,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             player.GetComponent<States>().spawnPos = transform.GetChild(2).GetChild(teamIndex).position;
         }
         player.GetComponent<States>().teamIndex = teamIndex;
-        Debug.Log(player.GetComponent<States>().spawnPos);
         player.GetComponent<States>().isAttack = LobbyResources.playerTeamAttack[index];
         return player;
     }
@@ -131,9 +131,27 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             //For Testing! Using 10s to change to final scene now
             StartCoroutine(CountdownToFinale(roomPlayTime));
         } else if (sceneName.Contains("FinalBattle")){
+            //NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").
+            //    GetComponent<Camera>().enabled = true;
+            //NetworkClient.localPlayer.gameObject.GetComponent<FinalBattleBehaviour>().enabled = true;
+
+        }
+    }
+
+    public override void OnClientSceneChanged(NetworkConnection conn)
+    {
+        base.OnClientSceneChanged(conn);
+        if (SceneManager.GetActiveScene().name.Contains("FinalBattle"))
+        {
+            Debug.Log("Enable Client Battle Script");
             NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").
-                GetComponent<Camera>().enabled = true;
-            NetworkClient.localPlayer.gameObject.GetComponent<FinalBattleBehaviour>().enabled = true;
+                    GetComponent<Camera>().enabled = true;
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach (GameObject player in players)
+            {
+                player.GetComponent<FinalBattleBehaviour>().enabled = true;
+            }
+            //NetworkClient.localPlayer.gameObject.GetComponent<FinalBattleBehaviour>().enabled = true;
         }
     }
 
@@ -151,10 +169,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         ServerChangeScene("FinalBattle");
     }
 
-    public override void OnStartServer()
-    {
-        base.OnStartServer();
-        Debug.Log("Starting Server");
-    }
+   
 
 }
