@@ -2,6 +2,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using TMPro;
 
 public class Move : NetworkBehaviour {
 
@@ -18,6 +19,8 @@ public class Move : NetworkBehaviour {
     private bool swapXY = false;
     private bool revX = false;
     private bool revY = false;
+    public bool slowed;
+    private bool alrSlowed;
     
     public override void OnStartClient()
     {
@@ -46,14 +49,37 @@ public class Move : NetworkBehaviour {
     private void Update() {
         if (this.isLocalPlayer)
         {
+            if (SceneManager.GetActiveScene().name.Contains("FinalBattle"))
+            {
+                if (slowed && !alrSlowed)
+                {
+                    speed *= 0.5f;
+                    alrSlowed = true;
+                    TextMeshProUGUI TMPText = GameObject.FindGameObjectWithTag("UI").
+                                    transform.GetChild(5).GetComponent<TextMeshProUGUI>();
+                    TMPText.SetText(TMPText.text + "Slowed!\n");
+                }
+                else if (!slowed && alrSlowed)
+                {
+                    alrSlowed = false;
+                    speed *= 2.0f;
+                    TextMeshProUGUI TMPText = GameObject.FindGameObjectWithTag("UI").
+                                    transform.GetChild(5).GetComponent<TextMeshProUGUI>();
+                    string newText = TMPText.text.Replace("Slowed!\n", "");
+                    TMPText.SetText(newText);
+                }
+            }
             velocity.x = Input.GetAxisRaw("Horizontal");
             velocity.y = Input.GetAxisRaw("Vertical");
 
             if (scramble && !scrambleSet)
             {
-                swapXY = Random.value > 0.5;
-                revX = Random.value > 0.5;
-                revY = Random.value > 0.5;
+                do
+                {
+                    swapXY = Random.value > 0.5;
+                    revX = Random.value > 0.5;
+                    revY = Random.value > 0.5;
+                } while (!swapXY && !revX && !revY);
                 Debug.Log(string.Format("swapXY: {0} revX: {1} revY: {2}", swapXY, revX, revY));
                 scrambleSet = true;
                 StartCoroutine(StopScrambling());
@@ -98,8 +124,12 @@ public class Move : NetworkBehaviour {
 
     IEnumerator StopScrambling()
     {
+        TextMeshProUGUI TMPText = GameObject.FindGameObjectWithTag("UI").
+            transform.GetChild(5).GetComponent<TextMeshProUGUI>();
+        TMPText.SetText(TMPText.text + "Confused!\n");
         yield return new WaitForSeconds(5f);
-        Debug.Log("Stop Scrambling");
+        string newText = TMPText.text.Replace("Confused!\n", "");
+        TMPText.SetText(newText);
         CmdStopScrambling(gameObject);
     }
 

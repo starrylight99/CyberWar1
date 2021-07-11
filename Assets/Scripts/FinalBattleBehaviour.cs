@@ -5,15 +5,6 @@ using Mirror;
 
 public class FinalBattleBehaviour : NetworkBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         bool isAttack = GetComponent<States>().isAttack;

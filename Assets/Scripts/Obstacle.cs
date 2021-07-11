@@ -1,14 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Obstacle : MonoBehaviour
+public class Obstacle : NetworkBehaviour
 {
+    [SyncVar] public bool isAttack;
+
+    private void Start()
+    {
+        if (isServer)
+        {
+            StartCoroutine(trapSpawnTime());
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<Move>().speed *= 0.5f;
+            if (collision.gameObject.GetComponent<States>().isAttack != isAttack)
+            {
+                collision.gameObject.GetComponent<Move>().slowed = true;
+            }
         }
     }
 
@@ -16,8 +30,17 @@ public class Obstacle : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<Move>().speed *= 2f;
+            if (collision.gameObject.GetComponent<States>().isAttack != isAttack)
+            {
+                collision.gameObject.GetComponent<Move>().slowed = false;
+            }
         }
+    }
+
+    IEnumerator trapSpawnTime()
+    {
+        yield return new WaitForSeconds(10f);
+        NetworkServer.Destroy(gameObject);
     }
 
 }

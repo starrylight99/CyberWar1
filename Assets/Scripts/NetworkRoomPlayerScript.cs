@@ -22,6 +22,9 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     [SyncVar]
     public int teamIndex;
     private int _winGame = 0;
+
+    private bool slowCooldown;
+    private bool scrambleCooldown;
     public int winGame { 
         // Property to detect when the game is won or lost
         // bool might work but i set as int already lol
@@ -92,35 +95,78 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     {
         if (isLocalPlayer && SceneManager.GetActiveScene().name.Contains("FinalBattle"))
         {
-            if (Input.GetMouseButtonDown(0))
+            if (!slowCooldown && Input.GetMouseButtonDown(0))
             {
                 Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 30);
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(pos);
-                Debug.Log(mousePos);
-                CmdSpawnTrap(mousePos);
+                CmdSpawnTrap(mousePos, isAttack);
+                slowCooldown = true;
+                StartCoroutine(TrapCooldown("slow"));
             }
-            else if (Input.GetKeyDown(KeyCode.Space))
+            else if (!scrambleCooldown && Input.GetKeyDown(KeyCode.Space))
             {
                 Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 30);
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(pos);
                 Vector3 playerPos = Camera.main.ScreenToWorldPoint(Vector3.zero);
                 Vector3 dir = (playerPos - mousePos).normalized;
                 float angle = Mathf.Atan2(dir.y, dir.x) * 180 / Mathf.PI;
-                if ((dir.x < 0) && (dir.y < 0))
-                {
-                    angle += 270;
-                }
-                else
-                {
-                    angle -= 90;
-                }
-
+                angle = ((dir.x < 0) && (dir.y < 0)) ? angle += 270 : angle -= 90;
                 CmdSpawnKnockback(new Vector3(playerPos.x - (20 * dir.x), playerPos.y - (20 * dir.y), 0),
                     angle, -dir, isAttack);
+                scrambleCooldown = true;
+                StartCoroutine(TrapCooldown("scramble"));
             }
         }
     }
 
+    IEnumerator TrapCooldown(string obstacle)
+    {
+        GameObject canvas = GameObject.FindGameObjectWithTag("UI");
+        GameObject cooldown;
+        TextMeshProUGUI cdText;
+        int cd;
+        switch (obstacle)
+        {
+            case "slow":
+                cooldown = canvas.transform.GetChild(3).gameObject;
+                cd = 5;
+                cooldown.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(125 / 255.0f, 125 / 255.0f, 125 / 255.0f);
+                cdText = cooldown.GetComponentInChildren<TextMeshProUGUI>();
+                while (cd > 0)
+                {
+                    cdText.SetText(cd.ToString());
+                    yield return new WaitForSeconds(1f);
+                    cd--;
+                }
+                cdText.SetText("");
+                cooldown.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(1f, 1f, 1f);
+                slowCooldown = false;
+                break;
+            case "scramble":
+                cooldown = canvas.transform.GetChild(4).gameObject;
+                cd = 5;
+                cooldown.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(125 / 255.0f, 125 / 255.0f, 125 / 255.0f);
+                cdText = cooldown.GetComponentInChildren<TextMeshProUGUI>();
+                while (cd > 0)
+                {
+                    cdText.SetText(cd.ToString());
+                    yield return new WaitForSeconds(1f);
+                    cd--;
+                }
+                cdText.SetText("");
+                cooldown.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(1f, 1f, 1f);
+                scrambleCooldown = false;
+                break;
+            default:
+                yield return new WaitForSeconds(5f);
+                break;
+
+        }
+    }
     
 
     [Command]
@@ -137,10 +183,12 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     }
 
     [Command]
-    void CmdSpawnTrap(Vector3 mousePos)
+    void CmdSpawnTrap(Vector3 mousePos, bool isAttack)
     {
         GameObject trap = Resources.Load<GameObject>("SpawnableObstacles/SlowTrap");
-        NetworkServer.Spawn(Instantiate(trap, mousePos, Quaternion.identity));
+        GameObject slowTrap = Instantiate(trap, mousePos, Quaternion.identity);
+        slowTrap.GetComponent<Obstacle>().isAttack = isAttack;
+        NetworkServer.Spawn(slowTrap);
     }
 
     private void Quit()
