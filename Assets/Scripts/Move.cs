@@ -21,13 +21,13 @@ public class Move : NetworkBehaviour {
     private bool revY = false;
     public bool slowed;
     private bool alrSlowed;
+    public bool canMove = true;
     
     public override void OnStartClient()
     {
         base.OnStartClient();
         if (this.isLocalPlayer)
         {
-            Debug.Log("Client Started");
             if (instance == null)
             {
                 instance = gameObject;
@@ -47,7 +47,7 @@ public class Move : NetworkBehaviour {
     }
 
     private void Update() {
-        if (this.isLocalPlayer)
+        if (this.isLocalPlayer && canMove)
         {
             if (SceneManager.GetActiveScene().name.Contains("FinalBattle"))
             {
@@ -144,14 +144,5 @@ public class Move : NetworkBehaviour {
         {
             rb.MovePosition(rb.position + velocity * speed * Time.fixedDeltaTime);
         }
-        
     }
-
-    public override void OnStopClient()
-    {
-        base.OnStopClient();
-        Debug.Log("Client Stopped");
-        
-    }
-
 }

@@ -11,7 +11,6 @@ public class FinalBattleBehaviour : NetworkBehaviour
         if ((collision.gameObject.name.Equals("PlayerCollisionBlocker")) &&
             (isAttack != collision.transform.parent.GetComponent<States>().isAttack))
         {
-            Debug.Log("Changing Spawn");
             if (isAttack)
             {
                 transform.position = GetComponent<States>().spawnPos;

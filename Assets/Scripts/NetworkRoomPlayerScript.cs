@@ -25,6 +25,8 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
 
     private bool slowCooldown;
     private bool scrambleCooldown;
+    private bool startingUp = false;
+    private bool finaleReady = false;
     public int winGame { 
         // Property to detect when the game is won or lost
         // bool might work but i set as int already lol
@@ -93,15 +95,15 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
 
     void Update()
     {
-        if (isLocalPlayer && SceneManager.GetActiveScene().name.Contains("FinalBattle"))
+        if (isLocalPlayer && SceneManager.GetActiveScene().name.Contains("FinalBattle") && finaleReady)
         {
-            if (!slowCooldown && Input.GetMouseButtonDown(0))
+            if (!slowCooldown && Input.GetMouseButtonDown(1))
             {
                 Vector3 pos = new Vector3(Input.mousePosition.x, Input.mousePosition.y, 30);
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(pos);
                 CmdSpawnTrap(mousePos, isAttack);
                 slowCooldown = true;
-                StartCoroutine(TrapCooldown("slow"));
+                StartCoroutine(TrapCooldown("slow", 5));
             }
             else if (!scrambleCooldown && Input.GetKeyDown(KeyCode.Space))
             {
@@ -114,22 +116,32 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                 CmdSpawnKnockback(new Vector3(playerPos.x - (20 * dir.x), playerPos.y - (20 * dir.y), 0),
                     angle, -dir, isAttack);
                 scrambleCooldown = true;
-                StartCoroutine(TrapCooldown("scramble"));
+                StartCoroutine(TrapCooldown("scramble", 5));
             }
         }
     }
 
-    IEnumerator TrapCooldown(string obstacle)
+    private void FixedUpdate()
+    {
+        if (isLocalPlayer && SceneManager.GetActiveScene().name.Contains("FinalBattle"))
+        {
+            if (!startingUp)
+            {
+                startingUp = true;
+                StartCoroutine(TrapCooldown("Initial", 10));
+            }
+        }
+    }
+
+    IEnumerator TrapCooldown(string obstacle, int cd)
     {
         GameObject canvas = GameObject.FindGameObjectWithTag("UI");
         GameObject cooldown;
         TextMeshProUGUI cdText;
-        int cd;
         switch (obstacle)
         {
             case "slow":
                 cooldown = canvas.transform.GetChild(3).gameObject;
-                cd = 5;
                 cooldown.transform.GetChild(0).GetComponent<Image>().color =
                     new Color(125 / 255.0f, 125 / 255.0f, 125 / 255.0f);
                 cdText = cooldown.GetComponentInChildren<TextMeshProUGUI>();
@@ -146,7 +158,6 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                 break;
             case "scramble":
                 cooldown = canvas.transform.GetChild(4).gameObject;
-                cd = 5;
                 cooldown.transform.GetChild(0).GetComponent<Image>().color =
                     new Color(125 / 255.0f, 125 / 255.0f, 125 / 255.0f);
                 cdText = cooldown.GetComponentInChildren<TextMeshProUGUI>();
@@ -162,7 +173,30 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                 scrambleCooldown = false;
                 break;
             default:
-                yield return new WaitForSeconds(5f);
+                GameObject cooldown1 = canvas.transform.GetChild(3).gameObject;
+                cooldown1.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(125 / 255.0f, 125 / 255.0f, 125 / 255.0f);
+                TextMeshProUGUI cdText1 = cooldown1.GetComponentInChildren<TextMeshProUGUI>();
+                GameObject cooldown2 = canvas.transform.GetChild(4).gameObject;
+                cooldown2.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(125 / 255.0f, 125 / 255.0f, 125 / 255.0f);
+                TextMeshProUGUI cdText2 = cooldown2.GetComponentInChildren<TextMeshProUGUI>();
+                while (cd > 0)
+                {
+                    cdText1.SetText(cd.ToString());
+                    cdText2.SetText(cd.ToString());
+                    yield return new WaitForSeconds(1f);
+                    cd--;
+                }
+                cdText2.SetText("");
+                cooldown2.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(1f, 1f, 1f);
+                cdText1.SetText("");
+                cooldown1.transform.GetChild(0).GetComponent<Image>().color =
+                    new Color(1f, 1f, 1f);
+                slowCooldown = false;
+                scrambleCooldown = false;
+                finaleReady = true;
                 break;
 
         }
@@ -193,26 +227,11 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
 
     private void Quit()
     {
-        // Quit the game. Stopping host stops the game for all clients
-        //if (index == 0)
-        //{
-        //    GameObject.FindGameObjectWithTag("NetworkManager").
-        //        GetComponent<NetworkLobbyManagerCustomised>().StopHost(); //for now?
-        //}
-        //else
-        //{
-        //    if (isLocalPlayer)
-        //    {
-        //        // Start coroutine is needed as cmdremoveentry does not complete instantly at times
-        //        CmdRemoveEntry(index, isAttack, teamIndex);
-        //        StartCoroutine("removeClient");
-        //    }
-        //}
         if (isLocalPlayer)
         {
             // Start coroutine is needed as cmdremoveentry does not complete instantly at times
             CmdRemoveEntry(index, isAttack, teamIndex);
-            StartCoroutine("removeClient");
+            StartCoroutine(removeClient());
         }
     }
 
@@ -317,14 +336,16 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
         {
             if (readyScene.transform.GetChild(teamIndex + 3).GetChild(1).gameObject.GetComponent<Button>() == null)
             {
-                chooseChar = readyScene.transform.GetChild(teamIndex + 3).GetChild(1).gameObject.AddComponent<Button>();
+                chooseChar = readyScene.transform.GetChild(teamIndex + 3).
+                    GetChild(1).gameObject.AddComponent<Button>();
 
             }
             else
             {
-                chooseChar = readyScene.transform.GetChild(teamIndex + 3).GetChild(1).gameObject.GetComponent<Button>();
-                readyScene.transform.GetChild(teamIndex + 3).GetChild(1).gameObject.GetComponent<Image>().sprite =
-                    Resources.Load<Sprite>("shadedDark48");
+                chooseChar = readyScene.transform.GetChild(teamIndex + 3).
+                    GetChild(1).gameObject.GetComponent<Button>();
+                readyScene.transform.GetChild(teamIndex + 3).GetChild(1).
+                    gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("shadedDark48");
             }
             chooseChar.onClick.AddListener(ChooseCharacter);
             readyScene.transform.GetChild(teamIndex + 3).GetChild(1).GetComponent<Image>().color =
@@ -334,14 +355,16 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
         {
             if (readyScene.transform.GetChild(teamIndex + 6).GetChild(1).gameObject.GetComponent<Button>() == null)
             {
-                chooseChar = readyScene.transform.GetChild(teamIndex + 6).GetChild(1).gameObject.AddComponent<Button>();
+                chooseChar = readyScene.transform.GetChild(teamIndex + 6).GetChild(1).
+                    gameObject.AddComponent<Button>();
 
             }
             else
             {
-                chooseChar = readyScene.transform.GetChild(teamIndex + 6).GetChild(1).gameObject.GetComponent<Button>();
-                readyScene.transform.GetChild(teamIndex + 6).GetChild(1).gameObject.GetComponent<Image>().sprite =
-                    Resources.Load<Sprite>("shadedDark48");
+                chooseChar = readyScene.transform.GetChild(teamIndex + 6).GetChild(1).
+                    gameObject.GetComponent<Button>();
+                readyScene.transform.GetChild(teamIndex + 6).GetChild(1).
+                    gameObject.GetComponent<Image>().sprite = Resources.Load<Sprite>("shadedDark48");
             }
             chooseChar.onClick.AddListener(ChooseCharacter);
             readyScene.transform.GetChild(teamIndex + 6).GetChild(1).GetComponent<Image>().color =
@@ -478,7 +501,6 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     [Command]
     void CmdRemoveEntry(int index, bool isAtk, int teamIndex)
     {
-        Debug.Log("Removing Entry");
         LobbyResources.playerTeamAttack.RemoveAt(index);
         if (isAtk)
         {
@@ -665,7 +687,4 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             }
         }
     }
-    
-    
-    
 }

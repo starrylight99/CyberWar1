@@ -3,14 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEngine.UI;
 
 public class FinalBattle : MonoBehaviour
 {
+    public bool isAttack;
     float timer;
+    public GameObject player;
     [SerializeField] TextMeshProUGUI showTimer;
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("FinalBattle Script Started");
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
         {
@@ -18,6 +22,24 @@ public class FinalBattle : MonoBehaviour
         }
         timer = 120f;
         DisplayText(timer);
+        StartCoroutine(SetText());
+    }
+
+    IEnumerator SetText()
+    {
+        yield return new WaitForSeconds(0.05f);
+        GameObject InfoScreen = GameObject.FindGameObjectWithTag("UI").transform.GetChild(6).gameObject;
+        InfoScreen.SetActive(true);
+        player.GetComponent<Move>().canMove = false;
+        if (isAttack)
+        {
+            InfoScreen.transform.GetChild(1).gameObject.SetActive(true);
+        }
+        else
+        {
+            InfoScreen.transform.GetChild(2).gameObject.SetActive(true);
+        }
+        InfoScreen.transform.GetChild(4).GetComponent<Button>().onClick.AddListener(Close);
     }
 
     private void DisplayText(float timer)
@@ -57,34 +79,12 @@ public class FinalBattle : MonoBehaviour
         DisplayText(timer);
     }
 
-    //private void OnCollisionEnter2D(Collision2D collision)
-    //{
-    //    Debug.Log(collision.gameObject);
-    //    if ((collision.gameObject.tag.Equals("Player")) && (playable))
-    //    {
-    //        if (collision.gameObject.GetComponent<States>().isAttack)
-    //        {
-    //            GameObject[] roomPlayers = GameObject.FindGameObjectsWithTag("RoomPlayer");
-    //            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-    //            foreach (GameObject player in players)
-    //            {
-    //                player.GetComponent<Rigidbody2D>().constraints = 
-    //                    RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
-    //            }
-    //            foreach (GameObject roomPlayer in roomPlayers)
-    //            {
-    //                if (roomPlayer.GetComponent<NetworkRoomPlayerScript>().isAttack)
-    //                {
-    //                    roomPlayer.GetComponent<NetworkRoomPlayerScript>().winGame = 1;
-    //                }
-    //                else
-    //                {
-    //                    roomPlayer.GetComponent<NetworkRoomPlayerScript>().winGame = -1;
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
+    void Close()
+    {
+        GameObject InfoScreen = GameObject.FindGameObjectWithTag("UI").transform.GetChild(6).gameObject;
+        InfoScreen.SetActive(false);
+        player.GetComponent<Move>().canMove = true;
+    }
 
 
 }

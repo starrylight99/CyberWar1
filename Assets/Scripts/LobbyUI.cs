@@ -13,13 +13,53 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] GameObject message;
     public bool isAttack;
     public bool choseTeam = false;
-    GameObject settings;
+    string[] vulgarities = { "stupid", "idiot", "fuck", "shit" };
+    public GameObject accept;
+    public GameObject reject;
+    private bool accepted = true;
 
-    //[SerializeField] NetworkLobbyManagerCustomised networkLobbyManager;
+    private void Update()
+    {
+        if (displayName.text.Length != 0)
+        {
+            bool acceptName = true;
+            foreach (string vulgarity in vulgarities)
+            {
+                if (displayName.text.Contains(vulgarity))
+                {
+                    if (!reject.activeInHierarchy)
+                    {
+                        accept.SetActive(false);
+                        reject.SetActive(true);
+                        
+                    }
+                    acceptName = false;
+                    accepted = false;
+                }
+            }
+            if (acceptName && !accept.activeInHierarchy)
+            {
+                accept.SetActive(true);
+                reject.SetActive(false);
+                accepted = true;
+            }
+        }
+        else
+        {
+            accept.SetActive(false);
+            reject.SetActive(false);
+        }
+    }
 
 
     public void Host()
     {
+        if (!accepted)
+        {
+            message.GetComponent<TextMeshProUGUI>().SetText("Please Choose an appropriate name!");
+            StartCoroutine(removeText());
+            return;
+        }
         if (!choseTeam)
         {
             message.GetComponent<TextMeshProUGUI>().SetText("Please Choose your team first!");
@@ -35,6 +75,12 @@ public class LobbyUI : MonoBehaviour
     }   
     public void Join()
     {
+        if (!accepted)
+        {
+            message.GetComponent<TextMeshProUGUI>().SetText("Please Choose an appropriate name!");
+            StartCoroutine(removeText());
+            return;
+        }
         if (!choseTeam)
         {
             message.GetComponent<TextMeshProUGUI>().SetText("Please Choose your team first!");
@@ -49,10 +95,6 @@ public class LobbyUI : MonoBehaviour
             GetComponent<NetworkLobbyManagerCustomised>().networkAddress = joinMatchInput.text;
         GameObject.FindGameObjectWithTag("NetworkManager").
             GetComponent<NetworkLobbyManagerCustomised>().StartClient();
-        //settings = GameObject.Find("SETTINGS");
-        //settings.GetComponent<Settings>().playerName = displayName.text;
-        //GameObject.FindGameObjectWithTag("NetworkManager").
-        //    GetComponent<PlayFabClient>().Authenticate();
     }
 
     public void Attack()

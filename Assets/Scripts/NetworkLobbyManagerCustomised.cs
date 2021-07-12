@@ -29,9 +29,18 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         base.OnRoomStartClient();
         if (SceneManager.GetActiveScene().name == "Lobby")
         {
-            Debug.Log("Starting Client");
             playerName = GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(0).
                 GetChild(0).GetComponentInChildren<TMP_InputField>().text;
+            if (playerName.Length == 0)
+            {
+                playerName = "player#" + ((int) UnityEngine.Random.Range(1000, 9999)).ToString();
+            }
+            if (LobbyResources.playerNamesAtk.Contains(playerName) ||
+                LobbyResources.playerNamesDef.Contains(playerName))
+            {
+
+                playerName += ((int)UnityEngine.Random.Range(10, 99)).ToString();
+            }
             isAttack = GameObject.FindGameObjectWithTag("Lobby").GetComponent<LobbyUI>().isAttack;
             //Switch the screen from Host/Join screen to the Ready screen
             GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(0).gameObject.SetActive(false);
@@ -143,7 +152,9 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         base.OnClientSceneChanged(conn);
         if (SceneManager.GetActiveScene().name.Contains("FinalBattle"))
         {
-            Debug.Log("Enable Client Battle Script");
+            FinalBattle finale = GameObject.FindGameObjectWithTag("Flag").GetComponent<FinalBattle>();
+            finale.isAttack = NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack;
+            finale.player = NetworkClient.localPlayer.gameObject;
             NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").
                     GetComponent<Camera>().enabled = true;
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
@@ -151,7 +162,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             {
                 player.GetComponent<FinalBattleBehaviour>().enabled = true;
             }
-            //NetworkClient.localPlayer.gameObject.GetComponent<FinalBattleBehaviour>().enabled = true;
         }
     }
 

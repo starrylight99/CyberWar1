@@ -20,6 +20,14 @@ public class KnockBackObstacle : NetworkBehaviour
             }
         }
         GetComponent<Rigidbody2D>().AddForce(3000 * dir);
+        if (isAttack)
+        {
+            GetComponent<SpriteRenderer>().color = new Color(255 / 255.0f, 185 / 255.0f, 185 / 255.0f);
+        }
+        else
+        {
+            GetComponent<SpriteRenderer>().color = new Color(184 / 255.0f, 233 / 255.0f, 255 / 255.0f);
+        }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
