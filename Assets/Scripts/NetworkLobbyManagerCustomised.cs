@@ -160,6 +160,9 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             foreach (GameObject player in players)
             {
                 player.GetComponent<FinalBattleBehaviour>().enabled = true;
+                if (player.GetComponent<NetworkIdentity>().isLocalPlayer || finale.isAttack == player.GetComponent<States>().isAttack){
+                    player.transform.Find("Vision").gameObject.SetActive(true);
+                }
             }
         }
     }

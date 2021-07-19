@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using TMPro;
 using UnityEngine.SceneManagement;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class States : NetworkBehaviour
 {
@@ -22,6 +23,7 @@ public class States : NetworkBehaviour
     [SyncVar]
     public bool sabotaged;
     public int startTime;
+    List<GameObject> atkPlayers,defPlayers;
     bool timeIsRunning;
     public bool playingMinigame = false;
     public Vector3 spawnPos;
@@ -283,6 +285,68 @@ public class States : NetworkBehaviour
             {
                 fixedSabotage = false;
                 CmdFixedSabotage(isAttack);
+            }
+            if (SceneManager.GetActiveScene().name == "FinalBattle") {
+                atkPlayers = new List<GameObject>(); defPlayers = new List<GameObject>();
+                GameObject[] playersArr = GameObject.FindGameObjectsWithTag("Player");
+                foreach (GameObject player in playersArr)
+                {
+                    if (player.GetComponent<States>().isAttack){
+                        atkPlayers.Add(player);
+                    }
+                    else {
+                        defPlayers.Add(player);
+                    }
+                }
+                GameObject localPlayer = NetworkClient.localPlayer.gameObject;
+                Light2D playerLight = NetworkClient.localPlayer.gameObject.transform.Find("Vision").gameObject.transform.Find("Close Light").gameObject.GetComponent<Light2D>();
+
+                if (localPlayer.GetComponent<States>().isAttack) {
+                    foreach (GameObject defPlayer in defPlayers)
+                    {
+                        Behaviour name = (Behaviour)(defPlayer.GetComponentInChildren(typeof(TextMeshProUGUI), true));
+                        Debug.Log(name);
+                        foreach (GameObject atkPlayer in atkPlayers)
+                        {
+                            Debug.Log(Vector3.Distance(atkPlayer.transform.position, defPlayer.transform.position) < playerLight.pointLightOuterRadius);
+                            if (Vector3.Distance(atkPlayer.transform.position, defPlayer.transform.position) < playerLight.pointLightOuterRadius){
+                                goto EnableA;
+                            }
+                        }
+                        goto DisableA;
+
+                        EnableA:
+                            name.enabled = true;
+                            Debug.Log(name.enabled);
+                            break;
+                        DisableA:
+                            name.enabled = false;
+                            Debug.Log(name.enabled);
+                            break;
+                    }
+                } else {
+                    foreach (GameObject atkPlayer in atkPlayers)
+                    {
+                        Behaviour name = (Behaviour)(atkPlayer.GetComponentInChildren(typeof(TextMeshProUGUI), true));
+                        Debug.Log(name);
+                        foreach (GameObject defPlayer in defPlayers)
+                        {
+                            if (Vector3.Distance(atkPlayer.transform.position, defPlayer.transform.position) < playerLight.pointLightOuterRadius){
+                                goto EnableB;
+                            }
+                        }
+                        goto DisableB;
+
+                        EnableB:
+                            name.enabled = true;
+                            Debug.Log(name.enabled);
+                            break;
+                        DisableB:
+                            name.enabled = false;
+                            Debug.Log(name.enabled);
+                            break;
+                    }
+                }
             }
         }
     }
