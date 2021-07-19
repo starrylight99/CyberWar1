@@ -83,6 +83,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_A.cs" />
     <Compile Include="Assets\Scripts\StartComputer.cs" />
     <Compile Include="Assets\CodeMonkey\MonoBehaviours\PositionRendererSorter.cs" />
+    <Compile Include="Assets\Scripts\KnockBackObstacle.cs" />
     <Compile Include="Assets\Scripts\GameHandler.cs" />
     <Compile Include="Assets\Scripts\GameResources.cs" />
     <Compile Include="Assets\Scripts\BlockCollision.cs" />
@@ -111,6 +112,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets\Scripts\SaboScript.cs" />
     <Compile Include="Assets\Scripts\LobbyUI.cs" />
+    <Compile Include="Assets\Scripts\FirewallGame.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\CameraController.cs" />
     <Compile Include="Assets\CodeMonkey\MonoBehaviours\ComponentActions.cs" />
     <Compile Include="Assets\Scripts\CameraFollow.cs" />
@@ -134,7 +136,9 @@
     <Compile Include="Assets\Scripts\States.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventCheck.cs" />
     <Compile Include="Assets\CodeMonkey\Utils\FunctionPeriodic.cs" />
-    <Compile Include="Assets\Scripts\KnockBackObstacle.cs" />
+    <Compile Include="Assets\Scripts\StartFirewall.cs" />
+    <Compile Include="Assets\HyperLuminal\SlidingTilePuzzle\Scripts\ST_PuzzleDisplay.cs" />
+    <Compile Include="Assets\HyperLuminal\SlidingTilePuzzle\Scripts\ST_PuzzleTile.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Mirror\Plugins\Mono.Cecil\Mono.CecilX.dll" />

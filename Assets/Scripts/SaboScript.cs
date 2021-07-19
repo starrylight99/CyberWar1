@@ -6,6 +6,7 @@ using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -47,7 +48,15 @@ public class SaboScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SceneManager.UnloadSceneAsync("ChooseComputerGame");
+        //SceneManager.UnloadSceneAsync("ChooseComputerGame");
+        if (SceneManager.sceneCount > 2)
+        {
+            int scenes = SceneManager.sceneCount;
+            for (int i = 1; i < scenes - 1; i++)
+            {
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(i));
+            }
+        }
         inst1 = transform.GetChild(0).gameObject;
         inst2 = transform.GetChild(1).gameObject;
         game = transform.GetChild(2).gameObject;
@@ -67,6 +76,7 @@ public class SaboScript : MonoBehaviour
             answer += (char) (rng.Next(0, 9) + '0');
             gameSeq += (char)(i + '0');
         }
+        Debug.Log(answer);
         gameSeq = Shuffle(gameSeq);
     }
 
@@ -263,9 +273,13 @@ public class SaboScript : MonoBehaviour
         }
         player.transform.GetChild(0).gameObject.SetActive(true);
         player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
-        player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
-        player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-        player.GetComponent<States>().playingMinigame = false;
+        States playerStates = player.GetComponent<States>();
+        Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        playerStates.finishGame = 1;
+        playerStates.playingMinigame = false;
+        GameObject.FindGameObjectWithTag("RoomEventSystem").GetComponent<EventSystem>().enabled = true;
         SceneManager.UnloadSceneAsync("SabotageGameScene");
     }
 

@@ -21,7 +21,7 @@ public class MiningAI : NetworkBehaviour {
     Vector2 desiredVelocity,desiredPosition;
     float sqrMag,currSqrMag;
     TextMesh inventoryTextMesh;
-
+    public bool sabotaged = false;
     public bool isAttack;
 
     void Start() {
@@ -41,6 +41,10 @@ public class MiningAI : NetworkBehaviour {
             desiredVelocity = Vector2.zero;
         }
         sqrMag = currSqrMag;
+        if (sabotaged)
+        {
+            state = State.Idle;
+        }
         switch (state) {
         case State.Idle:
             //resourceNode = GameHandler.GetResourceNode_Static();

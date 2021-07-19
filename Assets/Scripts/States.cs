@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class States : NetworkBehaviour
 {
     [SerializeField]
+    public bool CompleteFirewallGame = false;
+    [SerializeField]
     public bool winIntelGame = false;
     [SerializeField]
     public bool winSaboGame = false;
@@ -17,8 +19,9 @@ public class States : NetworkBehaviour
     public string displayName;
     [SyncVar]
     public bool isAttack;
+    [SyncVar]
+    public bool sabotaged;
     public int startTime;
-    float totalTime;
     bool timeIsRunning;
     public bool playingMinigame = false;
     public Vector3 spawnPos;
@@ -26,12 +29,131 @@ public class States : NetworkBehaviour
     GameHandler gameHandlerComponent;
     MiningAI miningAI;
     public int teamIndex;
+    public int resourcesGained = 0;
+    public bool fixingSabotage;
+    public bool fixedSabotage;
+    private bool colorChanged = false;
+    TextMeshProUGUI message;
+    TextMeshProUGUI timer;
+    public int timeleft = 120;
+
+    public bool saboCD;
+    public bool intelCD;
+    public bool firewallCD;
+    private int _finishGame = 0;
+    public int finishGame
+    {
+        get { return _finishGame; }
+        set
+        {
+            _finishGame = value;
+            if (_finishGame == 1) //FinishSaboGame
+            {
+                saboCD = true;
+                StartCoroutine(GameCooldown(1, 30));
+                finishGame = 0;
+            }
+            else if (_finishGame == 2) //FinishIntelGame
+            {
+                intelCD = true;
+                StartCoroutine(GameCooldown(2, 30));
+                finishGame = 0;
+            }
+            else if (_finishGame == 3) //FinishFirewallGame
+            {
+                firewallCD = true;
+                StartCoroutine(GameCooldown(3, 30));
+                finishGame = 0;
+                if (isAttack)
+                {
+                    GameObject.FindGameObjectWithTag("Attack").transform.GetChild(2)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                }
+                else
+                {
+                    GameObject.FindGameObjectWithTag("Defend").transform.GetChild(2)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                }
+            }
+
+            if (saboCD && intelCD)
+            {
+                if (isAttack)
+                {
+                    GameObject.FindGameObjectWithTag("Attack").transform.GetChild(1)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                }
+                else
+                {
+                    GameObject.FindGameObjectWithTag("Defend").transform.GetChild(1)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                }
+            }
+        }
+    }
+
+    IEnumerator GameCooldown(int gameCD, int seconds)
+    {
+        yield return new WaitForSeconds((float)seconds);
+        if (!SceneManager.GetActiveScene().name.Contains("FinalBattle"))
+        {
+            switch (gameCD)
+            {
+                case 1:
+                    saboCD = false;
+                    if (!saboCD || !intelCD)
+                    {
+                        if (isAttack)
+                        {
+                            GameObject.FindGameObjectWithTag("Attack").transform.GetChild(1)
+                                .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+                        }
+                        else
+                        {
+                            GameObject.FindGameObjectWithTag("Defend").transform.GetChild(1)
+                                .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+                        }
+                    }
+                    break;
+                case 2:
+                    intelCD = false;
+                    if (!saboCD || !intelCD)
+                    {
+                        if (isAttack)
+                        {
+                            GameObject.FindGameObjectWithTag("Attack").transform.GetChild(1)
+                                .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+                        }
+                        else
+                        {
+                            GameObject.FindGameObjectWithTag("Defend").transform.GetChild(1)
+                                .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+                        }
+                    }
+                    break;
+                case 3:
+                    firewallCD = false;
+                    if (isAttack)
+                    {
+                        GameObject.FindGameObjectWithTag("Attack").transform.GetChild(2)
+                            .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+                    }
+                    else
+                    {
+                        GameObject.FindGameObjectWithTag("Defend").transform.GetChild(2)
+                            .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
         CmdSetName();
-        totalTime = (float) startTime;
         timeIsRunning = true;
         
         if (isAttack)
@@ -44,8 +166,23 @@ public class States : NetworkBehaviour
             spawnPos = GameObject.FindGameObjectWithTag("NetworkManager").transform.
                 GetChild(2).GetChild(teamIndex).position;
         }
+        message = GameObject.FindGameObjectWithTag("UI").transform.GetChild(3).GetComponent<TextMeshProUGUI>();
+        timer = GameObject.FindGameObjectWithTag("UI").transform.GetChild(4).GetComponent<TextMeshProUGUI>();
+        StartCoroutine(StartCountdown());
     }
 
+    IEnumerator StartCountdown()
+    {
+        while (timeleft > 0)
+        {
+            int minutes = (int)(timeleft / 60);
+            int seconds = (int)(timeleft - minutes * 60);
+            string text = minutes.ToString() + ":" + seconds.ToString();
+            timer.SetText(text);
+            yield return new WaitForSeconds(1f);
+            timeleft--;
+        }
+    }
 
     // Update is called once per frame
     void Update()
@@ -54,8 +191,7 @@ public class States : NetworkBehaviour
         {
             if (timeIsRunning)
             {
-                totalTime += Time.deltaTime;
-                if ((int)totalTime > 8)
+                if (timeleft < 5)
                 {
                     timeIsRunning = false;
                     if (playingMinigame)
@@ -75,19 +211,97 @@ public class States : NetworkBehaviour
                 }
             }
 
-            if (winIntelGame == true)
+            if (winIntelGame)
             {
                 // to add notification on winning the minigame
+                string newMsg = "Won Intelligence Game!\nGained Resources!\n";
+                StartCoroutine(setText(newMsg));
                 Debug.Log("Win Substitution Cipher Game");
                 winIntelGame = false;
             }
-            if (winSaboGame == true)
+            if (winSaboGame)
             {
                 // to add notification on winning the minigame
+                CmdSabotaged(isAttack);
+                string newMsg = "Won Sabotage Game!\nSending Sabotage to Opponents!\n";
+                StartCoroutine(setText(newMsg));
                 Debug.Log("Win Sabotage Game");
                 winSaboGame = false;
             }
+            if (CompleteFirewallGame)
+            {
+                //Add points to game resource
+                string noBurgers = resourcesGained == 1 ? resourcesGained.ToString() + " Burger!\n" :
+                    resourcesGained.ToString() + " Burgers!\n";
+                string newMsg = "Won Firewall Game!\nGained " + noBurgers;
+                StartCoroutine(setText(newMsg));
+                CmdAddResources(resourcesGained, isAttack);
+                CompleteFirewallGame = false;
+                resourcesGained = 0;
+            }
+            if (SceneManager.GetActiveScene().name.Contains("RoomScene"))
+            {
+                if (sabotaged && !colorChanged)
+                {
+                    if (isAttack)
+                    {
+                        GameObject.FindGameObjectWithTag("Attack").transform.GetChild(3).
+                            GetComponent<SpriteRenderer>().color = new Color(76 / 255f, 76 / 255f, 76 / 255f);
+                    }
+                    else
+                    {
+                        GameObject.FindGameObjectWithTag("Defend").transform.GetChild(3).
+                            GetComponent<SpriteRenderer>().color = new Color(76 / 255f, 76 / 255f, 76 / 255f);
+                    }
+                    colorChanged = true;
+                    string newMsg = "Check your generator!\n";
+                    StartCoroutine(setText(newMsg));
+                }
+                else if (!sabotaged && colorChanged)
+                {
+                    if (isAttack)
+                    {
+                        GameObject.FindGameObjectWithTag("Attack").transform.GetChild(3).
+                            GetComponent<SpriteRenderer>().color = new Color(1f,1f,1f);
+                    }
+                    else
+                    {
+                        GameObject.FindGameObjectWithTag("Defend").transform.GetChild(3).
+                            GetComponent<SpriteRenderer>().color = new Color(1f,1f,1f);
+                    }
+                    colorChanged = false;
+                    string newMsg = "Generator Fixed!\n";
+                    StartCoroutine(setText(newMsg));
+                }
+            }
+            if (fixingSabotage)
+            {
+                fixingSabotage = false;
+                CmdFixSabotage(isAttack);
+            }
+            if (fixedSabotage)
+            {
+                fixedSabotage = false;
+                CmdFixedSabotage(isAttack);
+            }
         }
+    }
+
+    IEnumerator setText(string newMsg)
+    {
+        message.SetText(message.text + newMsg);
+        int seconds = 5;
+        while (seconds > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            if (SceneManager.sceneCount > 1)
+            {
+                message.SetText("");
+            }
+            seconds--;
+        }
+        string newText = message.text.Replace(newMsg, "");
+        message.SetText(newText);
     }
 
     [Command]
@@ -182,4 +396,64 @@ public class States : NetworkBehaviour
         }
         miningAI.SetResourceNode(gameHandlerComponent.resourceNodeList[serial]);
     }
+
+    [Command]
+    void CmdAddResources(int amount, bool isAttack)
+    {
+        GameResources.AddGoldAmount(amount, isAttack);
+    }
+
+    [Command]
+    void CmdSabotaged(bool isAttack)
+    {
+        GameObject oppMiner;
+        if (isAttack)
+        {
+            oppMiner = GameObject.FindGameObjectWithTag("DefMiner");
+        }
+        else
+        {
+            oppMiner = GameObject.FindGameObjectWithTag("AtkMiner");
+        }
+        oppMiner.GetComponent<MiningAI>().sabotaged = true;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            States playerState = player.GetComponent<States>();
+            if (playerState.isAttack != isAttack)
+            {
+                playerState.sabotaged = true;
+            }
+        }
+    }
+
+    [Command]
+    void CmdFixSabotage(bool isAttack)
+    {
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            States playerState = player.GetComponent<States>();
+            if (playerState.isAttack == isAttack)
+            {
+                playerState.sabotaged = false;
+            }
+        }
+    }
+
+    [Command]
+    void CmdFixedSabotage(bool isAttack)
+    {
+        GameObject miner;
+        if (isAttack)
+        {
+            miner = GameObject.FindGameObjectWithTag("AtkMiner");
+        }
+        else
+        {
+            miner = GameObject.FindGameObjectWithTag("DefMiner");
+        }
+        miner.GetComponent<MiningAI>().sabotaged = false;
+    }
+
 }

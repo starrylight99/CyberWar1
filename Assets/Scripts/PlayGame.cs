@@ -14,24 +14,45 @@ public class PlayGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").gameObject;
-        Debug.Log(player);
+        foreach (GameObject players in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (players.GetComponent<States>().isLocalPlayer)
+            {
+                player = players;
+            }
+        }
+        if (SceneManager.sceneCount > 2)
+        {
+            int scenes = SceneManager.sceneCount;
+            for (int i = 1; i < scenes - 1; i++)
+            {
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(i));
+            }
+        }
         player.transform.GetChild(0).gameObject.SetActive(false);
         PlaySaboGame = transform.GetChild(0).gameObject;
         PlayIntelGame = transform.GetChild(1).gameObject;
         PlaySaboGame.GetComponent<Button>().onClick.AddListener(playSabo);
         PlayIntelGame.GetComponent<Button>().onClick.AddListener(playIntel);
+        States playerStates = player.GetComponent<States>();
+        if (playerStates.saboCD)
+        {
+            PlaySaboGame.SetActive(false);
+        }
+        if (playerStates.intelCD)
+        {
+            PlayIntelGame.SetActive(false);
+        }
         //PlayMiningGame.GetComponent<Button>().onClick.AddListener(playMining);
-        Debug.Log("started");
     }
 
-    private void playIntel()
+    public void playIntel()
     {
         Debug.Log("clickedIntel");
         SceneManager.LoadSceneAsync("IntelGameScene", LoadSceneMode.Additive);
     }
 
-    private void playSabo()
+    public void playSabo()
     {
         Debug.Log("clickedSabo");
         SceneManager.LoadSceneAsync("SabotageGameScene", LoadSceneMode.Additive);

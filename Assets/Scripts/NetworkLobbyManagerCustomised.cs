@@ -12,7 +12,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
     public bool isAttack;
     public string playerName;
     public int teamIndex;
-    public int roomPlayTime = 10;
+    public int roomPlayTime = 60;
     GameObject[] players;
 
     public override void OnRoomStartServer()
@@ -35,12 +35,11 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             {
                 playerName = "player#" + ((int) UnityEngine.Random.Range(1000, 9999)).ToString();
             }
-            if (LobbyResources.playerNamesAtk.Contains(playerName) ||
-                LobbyResources.playerNamesDef.Contains(playerName))
-            {
-
-                playerName += ((int)UnityEngine.Random.Range(10, 99)).ToString();
-            }
+            //if (LobbyResources.playerNamesAtk.Contains(playerName) ||
+            //    LobbyResources.playerNamesDef.Contains(playerName))
+            //{
+            //    playerName += ((int) UnityEngine.Random.Range(10, 99)).ToString();
+            //}
             isAttack = GameObject.FindGameObjectWithTag("Lobby").GetComponent<LobbyUI>().isAttack;
             //Switch the screen from Host/Join screen to the Ready screen
             GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(0).gameObject.SetActive(false);
@@ -66,7 +65,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         Vector3 spawnPos = transform.GetChild(0).GetChild(teamIndex).position;
         if (!LobbyResources.playerTeamAttack[index])
         {
-            spawnPos = new Vector3(spawnPos.x + 225, spawnPos.y, spawnPos.z);
+            spawnPos = new Vector3(spawnPos.x + 300, spawnPos.y, spawnPos.z);
         }
         
         GameObject player = Instantiate(players[spriteIndex], spawnPos, Quaternion.identity);

@@ -5,6 +5,7 @@ using System.IO;
 using SQLite4Unity3d;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 public class getPhrase
 {
@@ -26,7 +27,15 @@ public class SubstQn : MonoBehaviour
 
     void Start()
     {
-        SceneManager.UnloadSceneAsync("ChooseComputerGame");
+        //SceneManager.UnloadSceneAsync("ChooseComputerGame");
+        if (SceneManager.sceneCount > 2)
+        {
+            int scenes = SceneManager.sceneCount;
+            for (int i = 1; i < scenes - 1; i++)
+            {
+                SceneManager.UnloadSceneAsync(SceneManager.GetSceneAt(i));
+            }
+        }
         inst = transform.GetChild(0).gameObject;
         part1 = transform.GetChild(1).gameObject;
         part2 = transform.GetChild(2).gameObject;
@@ -128,11 +137,15 @@ public class SubstQn : MonoBehaviour
         {
             Debug.Log("wrong");
         }
+        States playerStates = player.GetComponent<States>();
+        Rigidbody2D rb = player.GetComponent<Rigidbody2D>();
+        rb.constraints = RigidbodyConstraints2D.None;
+        rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        playerStates.finishGame = 2;
+        playerStates.playingMinigame = false;
         player.transform.GetChild(0).gameObject.SetActive(true);
         player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
-        player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
-        player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-        player.GetComponent<States>().playingMinigame = false;
+        GameObject.FindGameObjectWithTag("RoomEventSystem").GetComponent<EventSystem>().enabled = true;
         SceneManager.UnloadSceneAsync("IntelGameScene");
     }
 
