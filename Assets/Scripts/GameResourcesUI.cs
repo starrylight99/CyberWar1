@@ -12,6 +12,8 @@ public class GameResourcesUI : NetworkBehaviour {
     [SerializeField] 
     TextMeshProUGUI resourceTMP;
     static int teamResources;
+    GameObject introPart1;
+    GameObject introPart2;
     
     private void Start() {
         //GameObject.FindGameObjectWithTag("Button").GetComponent<Button>().onClick.AddListener(back);
@@ -25,6 +27,24 @@ public class GameResourcesUI : NetworkBehaviour {
         };
         teamResources = 0;
         resourceTMP.SetText("Burgers: 0");
+        introPart1 = transform.GetChild(5).gameObject;
+        introPart2 = transform.GetChild(6).gameObject;
+        introPart1.SetActive(true);
+        introPart2.SetActive(false);
+        introPart1.GetComponentInChildren<Button>().onClick.AddListener(NextPage);
+    }
+
+    private void NextPage()
+    {
+        introPart1.SetActive(false);
+        introPart2.SetActive(true);
+        introPart2.GetComponentInChildren<Button>().onClick.AddListener(ClosePage);
+    }
+
+    private void ClosePage()
+    {
+        introPart1.SetActive(false);
+        introPart2.SetActive(false);
     }
 
     [Server]
