@@ -11,6 +11,8 @@ public class GameResourcesUI : NetworkBehaviour {
 
     [SerializeField] 
     TextMeshProUGUI resourceTMP;
+    [SerializeField]
+    TextMeshProUGUI resourceFOWTMP;
     static int teamResources;
     GameObject introPart1;
     GameObject introPart2;
@@ -25,8 +27,12 @@ public class GameResourcesUI : NetworkBehaviour {
             //erverCommandUpdateResource();
             ServerCommandUpdateResource();
         };
+        GameResources.OnFOWAmountChanged += delegate (object sender, EventArgs e) {
+            ServerCommandUpdateFOWResource();
+        };
         teamResources = 0;
-        resourceTMP.SetText("Burgers: 0");
+        resourceTMP.SetText("Energy: 0");
+        resourceFOWTMP.SetText("Stardust: 0");
         introPart1 = transform.GetChild(5).gameObject;
         introPart2 = transform.GetChild(6).gameObject;
         introPart1.SetActive(true);
@@ -51,12 +57,29 @@ public class GameResourcesUI : NetworkBehaviour {
     private void ServerCommandUpdateResource(){
         UpdateResource(GameResources.atkResourceAmount, GameResources.defResourceAmount);
     }
+
+    [Server]
+    private void ServerCommandUpdateFOWResource()
+    {
+        UpdateFOWResource(GameResources.atkFOWAmt, GameResources.defFOWAmt);
+    }
+
     [ClientRpc]
     public void UpdateResource(int atk, int def) {
         GameResources.atkResourceAmount = atk;
         GameResources.defResourceAmount = def;
         player = NetworkClient.localPlayer.gameObject.GetComponent<States>();
         teamResources = GameResources.GetGoldAmount(player.isAttack);
-        resourceTMP.SetText("Burgers: " + teamResources);
+        resourceTMP.SetText("Energy: " + teamResources);
+    }
+
+    [ClientRpc]
+    public void UpdateFOWResource(int atk, int def)
+    {
+        GameResources.atkFOWAmt = atk;
+        GameResources.defFOWAmt = def;
+        player = NetworkClient.localPlayer.gameObject.GetComponent<States>();
+        teamResources = GameResources.GetFOWAmount(player.isAttack);
+        resourceFOWTMP.SetText("Stardust: " + teamResources);
     }
 }

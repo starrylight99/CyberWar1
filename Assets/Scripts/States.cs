@@ -58,7 +58,7 @@ public class States : NetworkBehaviour
             else if (_finishGame == 2) //FinishIntelGame
             {
                 intelCD = true;
-                StartCoroutine(GameCooldown(2, 30));
+                StartCoroutine(GameCooldown(2, 10));
                 finishGame = 0;
             }
             else if (_finishGame == 3) //FinishFirewallGame
@@ -216,8 +216,9 @@ public class States : NetworkBehaviour
             if (winIntelGame)
             {
                 // to add notification on winning the minigame
-                string newMsg = "Won Intelligence Game!\nGained Resources!\n";
+                string newMsg = "Correct! Gained 2 Stardust!\n";
                 StartCoroutine(setText(newMsg));
+                CmdAddFOWResources(2, isAttack);
                 Debug.Log("Win Substitution Cipher Game");
                 winIntelGame = false;
             }
@@ -225,7 +226,7 @@ public class States : NetworkBehaviour
             {
                 // to add notification on winning the minigame
                 CmdSabotaged(isAttack);
-                string newMsg = "Won Sabotage Game!\nSending Sabotage to Opponents!\n";
+                string newMsg = "Correct! Sending Sabotage to Opponents!\n";
                 StartCoroutine(setText(newMsg));
                 Debug.Log("Win Sabotage Game");
                 winSaboGame = false;
@@ -233,9 +234,7 @@ public class States : NetworkBehaviour
             if (CompleteFirewallGame)
             {
                 //Add points to game resource
-                string noBurgers = resourcesGained == 1 ? resourcesGained.ToString() + " Burger!\n" :
-                    resourcesGained.ToString() + " Burgers!\n";
-                string newMsg = "Won Firewall Game!\nGained " + noBurgers;
+                string newMsg = "Gained " + resourcesGained.ToString() + " Energy!";
                 StartCoroutine(setText(newMsg));
                 CmdAddResources(resourcesGained, isAttack);
                 CompleteFirewallGame = false;
@@ -465,6 +464,12 @@ public class States : NetworkBehaviour
     void CmdAddResources(int amount, bool isAttack)
     {
         GameResources.AddGoldAmount(amount, isAttack);
+    }
+
+    [Command]
+    void CmdAddFOWResources(int amount, bool isAttack)
+    {
+        GameResources.AddFOWAmount(amount, isAttack);
     }
 
     [Command]

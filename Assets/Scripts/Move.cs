@@ -22,6 +22,8 @@ public class Move : NetworkBehaviour {
     public bool slowed;
     private bool alrSlowed;
     public bool canMove = true;
+    public float slowPercent;
+    public float confusedDuration;
     
     public override void OnStartClient()
     {
@@ -53,7 +55,7 @@ public class Move : NetworkBehaviour {
             {
                 if (slowed && !alrSlowed)
                 {
-                    speed *= 0.5f;
+                    speed *= slowPercent;
                     alrSlowed = true;
                     TextMeshProUGUI TMPText = GameObject.FindGameObjectWithTag("UI").
                                     transform.GetChild(5).GetComponent<TextMeshProUGUI>();
@@ -62,7 +64,7 @@ public class Move : NetworkBehaviour {
                 else if (!slowed && alrSlowed)
                 {
                     alrSlowed = false;
-                    speed *= 2.0f;
+                    speed *= 1 / slowPercent;
                     TextMeshProUGUI TMPText = GameObject.FindGameObjectWithTag("UI").
                                     transform.GetChild(5).GetComponent<TextMeshProUGUI>();
                     string newText = TMPText.text.Replace("Slowed!\n", "");
@@ -127,7 +129,7 @@ public class Move : NetworkBehaviour {
         TextMeshProUGUI TMPText = GameObject.FindGameObjectWithTag("UI").
             transform.GetChild(5).GetComponent<TextMeshProUGUI>();
         TMPText.SetText(TMPText.text + "Confused!\n");
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(confusedDuration);
         string newText = TMPText.text.Replace("Confused!\n", "");
         TMPText.SetText(newText);
         CmdStopScrambling(gameObject);

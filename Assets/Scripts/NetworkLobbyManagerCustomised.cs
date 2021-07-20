@@ -163,7 +163,65 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
                 if (player.GetComponent<NetworkIdentity>().isLocalPlayer || finale.isAttack == player.GetComponent<States>().isAttack){
                     player.transform.Find("Vision").gameObject.SetActive(true);
                 }
+                Move playerMove = player.GetComponent<Move>();
+                if (player.GetComponent<States>().isAttack)
+                {
+                    if (GameResources.defResourceAmount > 35)
+                    {
+                        playerMove.slowPercent = 0.60f;
+                        playerMove.confusedDuration = 6f;
+                    }
+                    else if (GameResources.defResourceAmount > 20)
+                    {
+                        playerMove.slowPercent = 0.50f;
+                        playerMove.confusedDuration = 5f;
+                    }
+                    else if (GameResources.defResourceAmount > 10)
+                    {
+                        playerMove.slowPercent = 0.40f;
+                        playerMove.confusedDuration = 4f;
+                    }
+                    else if (GameResources.defResourceAmount > 5)
+                    {
+                        playerMove.slowPercent = 0.30f;
+                        playerMove.confusedDuration = 3f;
+                    }
+                    else
+                    {
+                        playerMove.slowPercent = 0.20f;
+                        playerMove.confusedDuration = 2f;
+                    }
+                }
+                else
+                {
+                    if (GameResources.atkResourceAmount > 35)
+                    {
+                        playerMove.slowPercent = 0.40f;
+                        playerMove.confusedDuration = 6f;
+                    }
+                    else if (GameResources.atkResourceAmount > 20)
+                    {
+                        playerMove.slowPercent = 0.50f;
+                        playerMove.confusedDuration = 5f;
+                    }
+                    else if (GameResources.atkResourceAmount > 10)
+                    {
+                        playerMove.slowPercent = 0.60f;
+                        playerMove.confusedDuration = 4f;
+                    }
+                    else if (GameResources.atkResourceAmount > 5)
+                    {
+                        playerMove.slowPercent = 0.70f;
+                        playerMove.confusedDuration = 3f;
+                    }
+                    else
+                    {
+                        playerMove.slowPercent = 0.80f;
+                        playerMove.confusedDuration = 2f;
+                    }
+                }
             }
+            
         }
     }
 

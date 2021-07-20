@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 
 
-public class ST_PuzzleDisplay : MonoBehaviour 
+public class ST_PuzzleDisplay : MonoBehaviour
 {
 	GameObject player;
 	System.Random rng = new System.Random();
@@ -13,7 +13,7 @@ public class ST_PuzzleDisplay : MonoBehaviour
 
 	// the width and height of the puzzle in tiles.
 	public int Height = 3;
-	public int Width  = 3;
+	public int Width = 3;
 
 	// additional scaling value.
 	public Vector3 PuzzleScale = new Vector3(1.0f, 1.0f, 1.0f);
@@ -32,7 +32,7 @@ public class ST_PuzzleDisplay : MonoBehaviour
 
 	// array of the spawned tiles.
 	private GameObject[,] TileDisplayArray;
-	private List<Vector3>  DisplayPositions = new List<Vector3>();
+	private List<Vector3> DisplayPositions = new List<Vector3>();
 
 	// position and scale values.
 	private Vector3 Scale;
@@ -42,25 +42,25 @@ public class ST_PuzzleDisplay : MonoBehaviour
 	public bool Complete = false;
 
 	// Use this for initialization
-	void Start () 
+	void Start()
 	{
 		// create the games puzzle tiles from the provided image.
 		CreatePuzzleTiles();
 
 		// mix up the puzzle.
 		StartCoroutine(JugglePuzzle());
-		foreach (GameObject players in GameObject.FindGameObjectsWithTag("Player"))
-		{
-			if (players.GetComponent<States>().isLocalPlayer)
-			{
-				player = players;
-			}
-		}
-		player.transform.GetChild(0).gameObject.SetActive(false);
-	}
-	
+        foreach (GameObject players in GameObject.FindGameObjectsWithTag("Player"))
+        {
+            if (players.GetComponent<States>().isLocalPlayer)
+            {
+                player = players;
+            }
+        }
+        player.transform.GetChild(0).gameObject.SetActive(false);
+    }
+
 	// Update is called once per frame
-	void Update () 
+	void Update()
 	{
 		// move the puzzle to the position set in the inspector.
 		this.transform.localPosition = PuzzlePosition;
@@ -74,7 +74,7 @@ public class ST_PuzzleDisplay : MonoBehaviour
 		// check if we can move this tile and get the position we can move to.
 		ST_PuzzleTile MoveTo = CheckIfWeCanMove((int)thisTile.GridLocation.x, (int)thisTile.GridLocation.y, thisTile);
 
-		if(MoveTo != thisTile)
+		if (MoveTo != thisTile)
 		{
 			// get the target position for this new tile.
 			Vector3 TargetPos = MoveTo.TargetPosition;
@@ -96,70 +96,70 @@ public class ST_PuzzleDisplay : MonoBehaviour
 	private ST_PuzzleTile CheckMoveLeft(int Xpos, int Ypos, ST_PuzzleTile thisTile)
 	{
 		// move left 
-		if((Xpos - 1)  >= 0)
+		if ((Xpos - 1) >= 0)
 		{
 			// we can move left, is the space currently being used?
 			return GetTileAtThisGridLocation(Xpos - 1, Ypos, thisTile);
 		}
-		
+
 		return thisTile;
 	}
-	
+
 	private ST_PuzzleTile CheckMoveRight(int Xpos, int Ypos, ST_PuzzleTile thisTile)
 	{
 		// move right 
-		if((Xpos + 1)  < Width)
+		if ((Xpos + 1) < Width)
 		{
 			// we can move right, is the space currently being used?
-			return GetTileAtThisGridLocation(Xpos + 1, Ypos , thisTile);
+			return GetTileAtThisGridLocation(Xpos + 1, Ypos, thisTile);
 		}
-		
+
 		return thisTile;
 	}
-	
+
 	private ST_PuzzleTile CheckMoveDown(int Xpos, int Ypos, ST_PuzzleTile thisTile)
 	{
 		// move down 
-		if((Ypos - 1)  >= 0)
+		if ((Ypos - 1) >= 0)
 		{
 			// we can move down, is the space currently being used?
-			return GetTileAtThisGridLocation(Xpos, Ypos  - 1, thisTile);
+			return GetTileAtThisGridLocation(Xpos, Ypos - 1, thisTile);
 		}
-		
+
 		return thisTile;
 	}
-	
+
 	private ST_PuzzleTile CheckMoveUp(int Xpos, int Ypos, ST_PuzzleTile thisTile)
 	{
 		// move up 
-		if((Ypos + 1)  < Height)
+		if ((Ypos + 1) < Height)
 		{
 			// we can move up, is the space currently being used?
-			return GetTileAtThisGridLocation(Xpos, Ypos  + 1, thisTile);
+			return GetTileAtThisGridLocation(Xpos, Ypos + 1, thisTile);
 		}
-		
+
 		return thisTile;
 	}
-	
+
 	private ST_PuzzleTile CheckIfWeCanMove(int Xpos, int Ypos, ST_PuzzleTile thisTile)
 	{
 		// check each movement direction
-		if(CheckMoveLeft(Xpos, Ypos, thisTile) != thisTile)
+		if (CheckMoveLeft(Xpos, Ypos, thisTile) != thisTile)
 		{
 			return CheckMoveLeft(Xpos, Ypos, thisTile);
 		}
-		
-		if(CheckMoveRight(Xpos, Ypos, thisTile) != thisTile)
+
+		if (CheckMoveRight(Xpos, Ypos, thisTile) != thisTile)
 		{
 			return CheckMoveRight(Xpos, Ypos, thisTile);
 		}
-		
-		if(CheckMoveDown(Xpos, Ypos, thisTile) != thisTile)
+
+		if (CheckMoveDown(Xpos, Ypos, thisTile) != thisTile)
 		{
 			return CheckMoveDown(Xpos, Ypos, thisTile);
 		}
-		
-		if(CheckMoveUp(Xpos, Ypos, thisTile) != thisTile)
+
+		if (CheckMoveUp(Xpos, Ypos, thisTile) != thisTile)
 		{
 			return CheckMoveUp(Xpos, Ypos, thisTile);
 		}
@@ -169,18 +169,18 @@ public class ST_PuzzleDisplay : MonoBehaviour
 
 	private ST_PuzzleTile GetTileAtThisGridLocation(int x, int y, ST_PuzzleTile thisTile)
 	{
-		for(int j = Height - 1; j >= 0; j--)
+		for (int j = Height - 1; j >= 0; j--)
 		{
-			for(int i = 0; i < Width; i++)
+			for (int i = 0; i < Width; i++)
 			{
 				// check if this tile has the correct grid display location.
-				if((TileDisplayArray[i,j].GetComponent<ST_PuzzleTile>().GridLocation.x == x)&&
-				   (TileDisplayArray[i,j].GetComponent<ST_PuzzleTile>().GridLocation.y == y))
+				if ((TileDisplayArray[i, j].GetComponent<ST_PuzzleTile>().GridLocation.x == x) &&
+				   (TileDisplayArray[i, j].GetComponent<ST_PuzzleTile>().GridLocation.y == y))
 				{
-					if(TileDisplayArray[i,j].GetComponent<ST_PuzzleTile>().Active == false)
+					if (TileDisplayArray[i, j].GetComponent<ST_PuzzleTile>().Active == false)
 					{
 						// return this tile active property. 
-						return TileDisplayArray[i,j].GetComponent<ST_PuzzleTile>();
+						return TileDisplayArray[i, j].GetComponent<ST_PuzzleTile>();
 					}
 				}
 			}
@@ -194,24 +194,24 @@ public class ST_PuzzleDisplay : MonoBehaviour
 		yield return new WaitForSeconds(1.0f);
 
 		// hide a puzzle tile (one is always missing to allow the puzzle movement).
-		TileDisplayArray[0,0].GetComponent<ST_PuzzleTile>().Active = false;
+		TileDisplayArray[0, 0].GetComponent<ST_PuzzleTile>().Active = false;
 
 		yield return new WaitForSeconds(1.0f);
 
-		for(int k = 0; k < 20; k++)
+		for (int k = 0; k < 8; k++)
 		{
 			// use random to position each puzzle section in the array delete the number once the space is filled.
-			
-			for(int j = 0; j < Height; j++)
+
+			for (int j = 0; j < Height; j++)
 			{
-				for(int i = 0; i < Width; i++)
+				for (int i = 0; i < Width; i++)
 				{
 					// attempt to execute a move for this tile.
 					// modified to be like abit easier i guess cos at random, not sure if it works
 
 					int buf1 = rng.Next(0, Height);
 					int buf2 = rng.Next(0, Width);
-					TileDisplayArray[buf1,buf2].GetComponent<ST_PuzzleTile>().ExecuteAdditionalMove();
+					TileDisplayArray[buf1, buf2].GetComponent<ST_PuzzleTile>().ExecuteAdditionalMove();
 
 					yield return new WaitForSeconds(0.02f);
 				}
@@ -226,16 +226,16 @@ public class ST_PuzzleDisplay : MonoBehaviour
 
 	public IEnumerator CheckForComplete()
 	{
-		while(Complete == false)
+		while (Complete == false)
 		{
 			// iterate over all the tiles and check if they are in the correct position.
 			Complete = true;
-			for(int j = Height - 1; j >= 0; j--)
+			for (int j = Height - 1; j >= 0; j--)
 			{
-				for(int i = 0; i < Width; i++)
+				for (int i = 0; i < Width; i++)
 				{
 					// check if this tile has the correct grid display location.
-					if(TileDisplayArray[i,j].GetComponent<ST_PuzzleTile>().CorrectLocation == false)  
+					if (TileDisplayArray[i, j].GetComponent<ST_PuzzleTile>().CorrectLocation == false)
 					{
 						Complete = false;
 					}
@@ -244,21 +244,21 @@ public class ST_PuzzleDisplay : MonoBehaviour
 
 			yield return null;
 		}
-				
+
 		// if we are still complete then all the tiles are correct.
-		if(Complete)
+		if (Complete)
 		{
 			Debug.Log("Puzzle Complete!");
-			player.GetComponent<States>().fixedSabotage = true;
-			player.transform.GetChild(0).gameObject.SetActive(true);
-			player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
-			player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
-			player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
-			player.GetComponent<States>().playingMinigame = false;
-			SceneManager.UnloadSceneAsync("SlidingPuzzleScene");
-		}
+            player.GetComponent<States>().fixedSabotage = true;
+            player.transform.GetChild(0).gameObject.SetActive(true);
+            player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
+            player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
+            player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
+            player.GetComponent<States>().playingMinigame = false;
+            SceneManager.UnloadSceneAsync("SlidingPuzzleScene");
+        }
 
-		yield return null;
+        yield return null;
 	}
 
 	private Vector2 ConvertIndexToGrid(int index)
@@ -267,9 +267,9 @@ public class ST_PuzzleDisplay : MonoBehaviour
 		int HeightIndex = 0;
 
 		// take the index value and return the grid array location X,Y.
-		for(int i = 0; i < Height; i++)
+		for (int i = 0; i < Height; i++)
 		{
-			if(WidthIndex < Width)
+			if (WidthIndex < Width)
 			{
 				return new Vector2(WidthIndex, HeightIndex);
 			}
@@ -286,36 +286,36 @@ public class ST_PuzzleDisplay : MonoBehaviour
 	private void CreatePuzzleTiles()
 	{
 		// using the width and height variables create an array.
-		TileDisplayArray = new GameObject[Width,Height];
+		TileDisplayArray = new GameObject[Width, Height];
 
 		// set the scale and position values for this puzzle.
-		Scale = new Vector3(1.0f/Width, 1.0f, 1.0f/Height);
+		Scale = new Vector3(1.0f / Width, 1.0f, 1.0f / Height);
 		Tile.transform.localScale = Scale;
 
 		// used to count the number of tiles and assign each tile a correct value.
 		int TileValue = 0;
 
 		// spawn the tiles into an array.
-		for(int j = Height - 1; j >= 0; j--)
+		for (int j = Height - 1; j >= 0; j--)
 		{
-			for(int i = 0; i < Width; i++)
+			for (int i = 0; i < Width; i++)
 			{
 				// calculate the position of this tile all centred around Vector3(0.0f, 0.0f, 0.0f).
-				Position = new Vector3(((Scale.x * (i + 0.5f))-(Scale.x * (Width/2.0f))) * (10.0f + SeperationBetweenTiles), 
-				                       0.0f, 
-				                      ((Scale.z * (j + 0.5f))-(Scale.z * (Height/2.0f))) * (10.0f + SeperationBetweenTiles));
+				Position = new Vector3(((Scale.x * (i + 0.5f)) - (Scale.x * (Width / 2.0f))) * (10.0f + SeperationBetweenTiles),
+									   0.0f,
+									  ((Scale.z * (j + 0.5f)) - (Scale.z * (Height / 2.0f))) * (10.0f + SeperationBetweenTiles));
 
 				// set this location on the display grid.
 				DisplayPositions.Add(Position);
 
 				// spawn the object into play.
-				TileDisplayArray[i,j] = Instantiate(Tile, new Vector3(0.0f, 0.0f, 0.0f) , Quaternion.Euler(90.0f, -180.0f, 0.0f)) as GameObject;
-				TileDisplayArray[i,j].gameObject.transform.parent = this.transform;
+				TileDisplayArray[i, j] = Instantiate(Tile, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.Euler(90.0f, -180.0f, 0.0f)) as GameObject;
+				TileDisplayArray[i, j].gameObject.transform.parent = this.transform;
 
 				// set and increment the display number counter.
-				ST_PuzzleTile thisTile = TileDisplayArray[i,j].GetComponent<ST_PuzzleTile>();
-				thisTile.ArrayLocation = new Vector2(i,j);
-				thisTile.GridLocation = new Vector2(i,j);
+				ST_PuzzleTile thisTile = TileDisplayArray[i, j].GetComponent<ST_PuzzleTile>();
+				thisTile.ArrayLocation = new Vector2(i, j);
+				thisTile.GridLocation = new Vector2(i, j);
 				thisTile.LaunchPositionCoroutine(Position);
 				TileValue++;
 
@@ -324,13 +324,13 @@ public class ST_PuzzleDisplay : MonoBehaviour
 
 				// apply the puzzle image to it.
 				thisTileMaterial.mainTexture = PuzzleImage;
-					
+
 				// set the offset and tile values for this material.
-				thisTileMaterial.mainTextureOffset = new Vector2(1.0f/Width * i, 1.0f/Height * j);
-				thisTileMaterial.mainTextureScale  = new Vector2(1.0f/Width, 1.0f/Height);
-					
+				thisTileMaterial.mainTextureOffset = new Vector2(1.0f / Width * i, 1.0f / Height * j);
+				thisTileMaterial.mainTextureScale = new Vector2(1.0f / Width, 1.0f / Height);
+
 				// assign the new material to this tile for display.
-				TileDisplayArray[i,j].GetComponent<Renderer>().material = thisTileMaterial;
+				TileDisplayArray[i, j].GetComponent<Renderer>().material = thisTileMaterial;
 			}
 		}
 
