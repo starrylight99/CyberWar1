@@ -6,6 +6,7 @@ using System;
 using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Experimental.Rendering.Universal;
 
 public class NetworkLobbyManagerCustomised : NetworkRoomManager
 {
@@ -157,11 +158,25 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").
                     GetComponent<Camera>().enabled = true;
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+
+            int visionScore = 10 + GameResources.GetFOWAmount(NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack);
+
             foreach (GameObject player in players)
             {
                 player.GetComponent<FinalBattleBehaviour>().enabled = true;
                 if (player.GetComponent<NetworkIdentity>().isLocalPlayer || finale.isAttack == player.GetComponent<States>().isAttack){
-                    player.transform.Find("Vision").gameObject.SetActive(true);
+                    GameObject mainVision = player.transform.Find("Vision").gameObject;
+
+                    // Uncomment for variable vision
+                    /* Light2D light = mainVision.transform.GetChild(0).GetComponent<Light2D>();
+                    Light2D vision = mainVision.transform.GetChild(1).GetComponent<Light2D>();
+
+                    light.pointLightOuterRadius = visionScore;
+                    light.pointLightInnerRadius = visionScore/4*3;
+                    vision.pointLightOuterRadius = visionScore;
+                    vision.pointLightInnerRadius = visionScore/4*3; */
+
+                    mainVision.SetActive(true);
                 }
                 Move playerMove = player.GetComponent<Move>();
                 if (player.GetComponent<States>().isAttack)
