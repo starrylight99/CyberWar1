@@ -7,15 +7,18 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.Events;
+using PlayFab;
 
 public class NetworkLobbyManagerCustomised : NetworkRoomManager
 {
+    public Configuration configuration;
     public bool isAttack;
     public string playerName;
     public int teamIndex;
     public int roomPlayTime = 60;
     GameObject[] players;
-
+    bool shutdown;
     public override void OnRoomStartServer()
     {
         //Get list of spawnable prefabs on start server
@@ -253,7 +256,4 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         }
         ServerChangeScene("FinalBattle");
     }
-
-   
-
 }

@@ -46,6 +46,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                         endscreen.SetActive(true);
                         GameObject.FindGameObjectWithTag("UI").transform.GetChild(1).gameObject.SetActive(false);
                         endscreen.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(Quit);
+                        EndGame();
                     }
                 }
                 else if (_winGame == -1)
@@ -58,6 +59,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                         endscreen.SetActive(true);
                         GameObject.FindGameObjectWithTag("UI").transform.GetChild(0).gameObject.SetActive(false);
                         endscreen.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(Quit);
+                        EndGame();
                     }
                 }
             }
@@ -686,5 +688,9 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                     SetText("");
             }
         }
+    }
+    [Command]
+    public void EndGame(){
+        Application.Quit();
     }
 }
