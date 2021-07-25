@@ -271,7 +271,7 @@ public class LobbyUI : MonoBehaviour
 
     private IEnumerator OnClientConnect(){
         while(!NetworkClient.isConnected){
-            Debug.Log(NetworkClient.isConnected);
+            Debug.Log("Network Client is connected: " + NetworkClient.isConnected);
             yield return new WaitForSeconds(1);
         }
         Debug.Log(NetworkClient.isConnected);

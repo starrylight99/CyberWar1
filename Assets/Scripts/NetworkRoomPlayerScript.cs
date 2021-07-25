@@ -28,6 +28,12 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     private bool scrambleCooldown;
     private bool startingUp = false;
     private bool finaleReady = false;
+    private void Start() {
+        base.Start();
+        if (isLocalPlayer){
+            NetworkClient.RegisterHandler<ReceiveDisconnectMessage>(OnReceiveDisconnect);
+        }
+    }
     public int winGame { 
         // Property to detect when the game is won or lost
         // bool might work but i set as int already lol
@@ -80,6 +86,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             GetComponent<NetworkLobbyManagerCustomised>().isAttack;
         CmdAddTeam(isAttack);
         CmdAddName(displayName, isAttack);
+        CmdSendServerUpdateTeam();
         CmdSendServerUpdateName();
         CmdSendServerUpdateSprite();
         CmdShowReadyStateUser(false, isAttack, teamIndex);
@@ -126,10 +133,13 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     {
         if (isLocalPlayer && SceneManager.GetActiveScene().name.Contains("FinalBattle"))
         {
-            if (!startingUp)
-            {
-                startingUp = true;
-                StartCoroutine(TrapCooldown("Initial", 10));
+            if (NetworkClient.ready){
+                if (!startingUp)
+                {
+                    startingUp = true;
+                    StartCoroutine(TrapCooldown("Initial", 10));
+                    CmdSendServerUpdateTeam();
+                }
             }
         }
     }
@@ -231,7 +241,6 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
         if (isLocalPlayer)
         {
             // Start coroutine is needed as cmdremoveentry does not complete instantly at times
-            CmdRemoveEntry(index, isAttack, teamIndex);
             StartCoroutine(removeClient());
         }
     }
@@ -469,6 +478,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             
         }
     }
+    
 
     [Command]
     public void CmdAddSprite(int sprite, int teamIndex, bool isAtk)
@@ -572,6 +582,13 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             updateReadyStateClientRpc(LobbyResources.playerReadyStateAtk, LobbyResources.playerReadyStateDef);
         }
         
+    }
+    public void CmdSendServerUpdateTeam(){
+        updateTeam(isAttack);
+    }
+    [Command]
+    public void updateTeam(bool isAtk){
+        isAttack = isAtk;
     }
 
     [ClientRpc]
@@ -702,8 +719,15 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             }
         }
     }
-    [Command]
-    public void EndGame(){
-        Application.Quit();
+    public void OnReceiveDisconnect(NetworkConnection conn, ReceiveDisconnectMessage msg){
+        Debug.Log("Player " + msg.index + " Disconnected");
+        CmdRemoveEntry(msg.index,msg.isAtk,msg.teamIndex);
     }
+}
+[Serializable]
+public struct ReceiveDisconnectMessage : NetworkMessage
+{
+    public int index;
+    public bool isAtk;
+    public int teamIndex;
 }

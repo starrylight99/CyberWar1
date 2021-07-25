@@ -174,6 +174,7 @@ public class SubstQn : MonoBehaviour
             GameObject box = part1.transform.GetChild(0).GetChild(1).GetChild(letter).gameObject;
             box.transform.GetChild(0).gameObject.SetActive(false);
             GameObject text = new GameObject().gameObject;
+            text.transform.position = new Vector3(0f, 0f, 1000f);
             text.transform.SetParent(box.transform);
             configure(text, letter);
         }
@@ -184,7 +185,7 @@ public class SubstQn : MonoBehaviour
         text.AddComponent<TextMeshProUGUI>().SetText(shuffle[letter].ToString());
         text.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f);
         text.GetComponent<RectTransform>().sizeDelta = new Vector2(20f, 20f);
-        text.GetComponent<TextMeshProUGUI>().fontSize = 10;
+        text.GetComponent<TextMeshProUGUI>().fontSize = 14;
         text.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
         text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
     }

@@ -8,6 +8,7 @@ using PlayFab.MultiplayerAgent.Model;
 
 public class PlayfabServer : MonoBehaviour {
     private List<ConnectedPlayer> _connectedPlayers;
+    public static PlayfabServer Instance { get; private set; }
     public bool Debugging = true;
     // Use this for initialization
     void Start () {
@@ -16,6 +17,8 @@ public class PlayfabServer : MonoBehaviour {
         if (configuration.buildType == BuildType.REMOTE_SERVER)
 		{
 			Debug.Log("Server Initializing");
+            Instance = this;
+            DontDestroyOnLoad(Instance);
 			_connectedPlayers = new List<ConnectedPlayer>();
 			PlayFabMultiplayerAgentAPI.Start();
 			PlayFabMultiplayerAgentAPI.IsDebugging = Debugging;
@@ -68,7 +71,7 @@ public class PlayfabServer : MonoBehaviour {
     }    
     IEnumerator ShutdownServerInXTime()
 	{
-		yield return new WaitForSeconds(300f);
+		yield return new WaitForSeconds(450f);
 		StartShutdownProcess();
 	}
     private void StartShutdownProcess()

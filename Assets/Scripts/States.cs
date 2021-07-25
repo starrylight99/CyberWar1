@@ -39,7 +39,7 @@ public class States : NetworkBehaviour
     private bool colorChanged = false;
     TextMeshProUGUI message;
     TextMeshProUGUI timer;
-    public int timeleft = 10;
+    public int timeleft = 120;
 
     public bool saboCD;
     public bool intelCD;

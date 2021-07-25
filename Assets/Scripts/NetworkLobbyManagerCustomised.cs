@@ -16,7 +16,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
     public bool isAttack;
     public string playerName;
     public int teamIndex;
-    public int roomPlayTime = 10;
+    public int roomPlayTime = 120;
     GameObject[] players;
     bool shutdown,loading;
     public static NetworkLobbyManagerCustomised Instance { get; private set; }
@@ -168,108 +168,109 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         base.OnClientSceneChanged(conn);
         if (SceneManager.GetActiveScene().name.Contains("FinalBattle"))
         {
-            FinalBattle finale = GameObject.FindGameObjectWithTag("Flag").GetComponent<FinalBattle>();
-            finale.isAttack = NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack;
-            finale.player = NetworkClient.localPlayer.gameObject;
-            NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").
-                    GetComponent<Camera>().enabled = true;
-            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            StartCoroutine(AwaitLocalClientReady(conn));
+            
+        } else {
+            base.OnClientSceneChanged(conn);
+        }
+    }
+    IEnumerator AwaitLocalClientReady(NetworkConnection conn){
+        NetworkClient.localPlayer.gameObject.GetComponent<States>().enabled = false;
+        NetworkClient.localPlayer.gameObject.GetComponent<Move>().enabled = false;
+        while (!NetworkClient.ready)
+        {
+            Debug.Log("Client not ready");
+            yield return new WaitForSeconds(0.25f);
+        }
+        Debug.Log("Client ready");
+        NetworkClient.localPlayer.gameObject.GetComponent<States>().enabled = true;
+        NetworkClient.localPlayer.gameObject.GetComponent<Move>().enabled = true;
 
-            int visionScore = 10 + GameResources.GetFOWAmount(NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack);
+        FinalBattle finale = GameObject.FindGameObjectWithTag("Flag").GetComponent<FinalBattle>();
+        finale.isAttack = NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack;
+        finale.player = NetworkClient.localPlayer.gameObject;
+        NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").
+                GetComponent<Camera>().enabled = true;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
-            foreach (GameObject player in players)
+        int visionScore = 10 + GameResources.GetFOWAmount(NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack);
+
+        foreach (GameObject player in players)
+        {
+            player.GetComponent<FinalBattleBehaviour>().enabled = true;
+            if (player.GetComponent<NetworkIdentity>().isLocalPlayer){
+                GameObject mainVision = player.transform.Find("Vision").gameObject;
+
+                // Uncomment for variable vision
+                /* Light2D light = mainVision.transform.GetChild(0).GetComponent<Light2D>();
+                Light2D vision = mainVision.transform.GetChild(1).GetComponent<Light2D>();
+
+                light.pointLightOuterRadius = visionScore;
+                light.pointLightInnerRadius = visionScore/4*3;
+                vision.pointLightOuterRadius = visionScore;
+                vision.pointLightInnerRadius = visionScore/4*3; */
+
+                mainVision.SetActive(true);
+            }
+            Move playerMove = player.GetComponent<Move>();
+            if (player.GetComponent<States>().isAttack)
             {
-                player.GetComponent<FinalBattleBehaviour>().enabled = true;
-                if (player.GetComponent<NetworkIdentity>().isLocalPlayer || finale.isAttack == player.GetComponent<States>().isAttack){
-                    GameObject mainVision = player.transform.Find("Vision").gameObject;
-
-                    // Uncomment for variable vision
-                    /* Light2D light = mainVision.transform.GetChild(0).GetComponent<Light2D>();
-                    Light2D vision = mainVision.transform.GetChild(1).GetComponent<Light2D>();
-
-                    light.pointLightOuterRadius = visionScore;
-                    light.pointLightInnerRadius = visionScore/4*3;
-                    vision.pointLightOuterRadius = visionScore;
-                    vision.pointLightInnerRadius = visionScore/4*3; */
-
-                    mainVision.SetActive(true);
-                }
-                Move playerMove = player.GetComponent<Move>();
-                if (player.GetComponent<States>().isAttack)
+                if (GameResources.defResourceAmount > 35)
                 {
-                    if (GameResources.defResourceAmount > 35)
-                    {
-                        playerMove.slowPercent = 0.60f;
-                        playerMove.confusedDuration = 6f;
-                    }
-                    else if (GameResources.defResourceAmount > 20)
-                    {
-                        playerMove.slowPercent = 0.50f;
-                        playerMove.confusedDuration = 5f;
-                    }
-                    else if (GameResources.defResourceAmount > 10)
-                    {
-                        playerMove.slowPercent = 0.40f;
-                        playerMove.confusedDuration = 4f;
-                    }
-                    else if (GameResources.defResourceAmount > 5)
-                    {
-                        playerMove.slowPercent = 0.30f;
-                        playerMove.confusedDuration = 3f;
-                    }
-                    else
-                    {
-                        playerMove.slowPercent = 0.20f;
-                        playerMove.confusedDuration = 2f;
-                    }
+                    playerMove.slowPercent = 0.60f;
+                    playerMove.confusedDuration = 6f;
+                }
+                else if (GameResources.defResourceAmount > 20)
+                {
+                    playerMove.slowPercent = 0.50f;
+                    playerMove.confusedDuration = 5f;
+                }
+                else if (GameResources.defResourceAmount > 10)
+                {
+                    playerMove.slowPercent = 0.40f;
+                    playerMove.confusedDuration = 4f;
+                }
+                else if (GameResources.defResourceAmount > 5)
+                {
+                    playerMove.slowPercent = 0.30f;
+                    playerMove.confusedDuration = 3f;
                 }
                 else
                 {
-                    if (GameResources.atkResourceAmount > 35)
-                    {
-                        playerMove.slowPercent = 0.40f;
-                        playerMove.confusedDuration = 6f;
-                    }
-                    else if (GameResources.atkResourceAmount > 20)
-                    {
-                        playerMove.slowPercent = 0.50f;
-                        playerMove.confusedDuration = 5f;
-                    }
-                    else if (GameResources.atkResourceAmount > 10)
-                    {
-                        playerMove.slowPercent = 0.60f;
-                        playerMove.confusedDuration = 4f;
-                    }
-                    else if (GameResources.atkResourceAmount > 5)
-                    {
-                        playerMove.slowPercent = 0.70f;
-                        playerMove.confusedDuration = 3f;
-                    }
-                    else
-                    {
-                        playerMove.slowPercent = 0.80f;
-                        playerMove.confusedDuration = 2f;
-                    }
+                    playerMove.slowPercent = 0.20f;
+                    playerMove.confusedDuration = 2f;
                 }
             }
-            
+            else
+            {
+                if (GameResources.atkResourceAmount > 35)
+                {
+                    playerMove.slowPercent = 0.40f;
+                    playerMove.confusedDuration = 6f;
+                }
+                else if (GameResources.atkResourceAmount > 20)
+                {
+                    playerMove.slowPercent = 0.50f;
+                    playerMove.confusedDuration = 5f;
+                }
+                else if (GameResources.atkResourceAmount > 10)
+                {
+                    playerMove.slowPercent = 0.60f;
+                    playerMove.confusedDuration = 4f;
+                }
+                else if (GameResources.atkResourceAmount > 5)
+                {
+                    playerMove.slowPercent = 0.70f;
+                    playerMove.confusedDuration = 3f;
+                }
+                else
+                {
+                    playerMove.slowPercent = 0.80f;
+                    playerMove.confusedDuration = 2f;
+                }
+            }
         }
     }
-    /* IEnumerator AwaitServerLoad(){
-        while (loading)
-        {
-            Debug.Log("AwaitServerLoad");
-            yield return new WaitForSeconds(1);
-        }
-    }
-    [Server]
-    void OnSceneLoaded(Scene scene, LoadSceneMode mode){
-        Debug.Log("Sever done loading " + scene.name);
-        GameObject.FindGameObjectWithTag("NetworkRpc").GetComponent<NetworkRpc>().ClientSceneChangeRpc(scene.name);
-    }
-    public void LoadingComplete(string name){
-        loading = false;
-    } */
 
     IEnumerator CountdownToFinale(int seconds)
     {
@@ -285,7 +286,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         Debug.Log("CountdownToFinale ended");
         if (configuration.buildType == BuildType.REMOTE_CLIENT){
             NetworkClient.Ready();
-        } else if (configuration.buildType == BuildType.REMOTE_SERVER){
+        } else if (configuration.buildType == BuildType.REMOTE_SERVER || configuration.buildType == BuildType.LOCAL_CLIENT){
             GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
             foreach (GameObject player in players)
             {
@@ -294,8 +295,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             }
             Debug.Log("Awaiting Clients");
             StartCoroutine(AwaitClientReady());
-        } else {
-            ServerChangeScene("FinalBattle");
         }
     }
     IEnumerator AwaitClientReady(){
@@ -334,7 +333,9 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
     {
         base.Awake();
         Instance = this;
-        NetworkServer.RegisterHandler<ReceiveAuthenticateMessage>(OnReceiveAuthenticate);
+        if (configuration.buildType == BuildType.REMOTE_SERVER){
+            NetworkServer.RegisterHandler<ReceiveAuthenticateMessage>(OnReceiveAuthenticate);
+        }
         /* if (configuration.buildType == BuildType.REMOTE_SERVER){
             SceneManager.sceneLoaded += OnSceneLoaded;
         } */
@@ -384,7 +385,17 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
 
     public override void OnServerDisconnect(NetworkConnection conn)
     {
+        if (SceneManager.GetActiveScene().name == "Lobby"){
+            NetworkRoomPlayerScript identity = conn.identity.GetComponent<NetworkRoomPlayerScript>();
+            NetworkServer.SendToAll<ReceiveDisconnectMessage>(new ReceiveDisconnectMessage()
+            {
+                index = identity.index,
+                isAtk = identity.isAttack,
+                teamIndex = identity.teamIndex
+            });
+        }
         base.OnServerDisconnect(conn);
+        Debug.LogWarning("Client Disconnected");
         var uconn = _connections.Find(c => c.ConnectionId == conn.connectionId);
         if (uconn != null)
         {

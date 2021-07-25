@@ -147,4 +147,8 @@ public class Move : NetworkBehaviour {
             rb.MovePosition(rb.position + velocity * speed * Time.fixedDeltaTime);
         }
     }
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
 }
