@@ -6,7 +6,8 @@ using System;
 using UnityEngine.UI;
 
 public class FinalBattle : MonoBehaviour
-{
+{   
+    public Configuration configuration;
     public bool isAttack;
     float timer;
     public GameObject player;
@@ -14,6 +15,7 @@ public class FinalBattle : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        configuration = GameObject.FindGameObjectWithTag("Configuration").GetComponent<Configuration>();
         Debug.Log("FinalBattle Script Started");
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
@@ -24,22 +26,23 @@ public class FinalBattle : MonoBehaviour
         DisplayText(timer);
         StartCoroutine(SetText());
     }
-
     IEnumerator SetText()
     {
-        yield return new WaitForSeconds(0.05f);
-        GameObject InfoScreen = GameObject.FindGameObjectWithTag("UI").transform.GetChild(6).gameObject;
-        InfoScreen.SetActive(true);
-        player.GetComponent<Move>().canMove = false;
-        if (isAttack)
-        {
-            InfoScreen.transform.GetChild(1).gameObject.SetActive(true);
+        if (configuration.buildType != BuildType.REMOTE_SERVER){
+            yield return new WaitForSeconds(0.05f);
+            GameObject InfoScreen = GameObject.FindGameObjectWithTag("UI").transform.GetChild(6).gameObject;
+            InfoScreen.SetActive(true);
+            player.GetComponent<Move>().canMove = false;
+            if (isAttack)
+            {
+                InfoScreen.transform.GetChild(1).gameObject.SetActive(true);
+            }
+            else
+            {
+                InfoScreen.transform.GetChild(2).gameObject.SetActive(true);
+            }
+            InfoScreen.transform.GetChild(4).GetComponent<Button>().onClick.AddListener(Close);
         }
-        else
-        {
-            InfoScreen.transform.GetChild(2).gameObject.SetActive(true);
-        }
-        InfoScreen.transform.GetChild(4).GetComponent<Button>().onClick.AddListener(Close);
     }
 
     private void DisplayText(float timer)

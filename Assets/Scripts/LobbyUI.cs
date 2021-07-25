@@ -266,9 +266,19 @@ public class LobbyUI : MonoBehaviour
     {
         Debug.Log("Playfab Auth success");
         networkManager.StartClient();
+        StartCoroutine(OnClientConnect());
+    }
+
+    private IEnumerator OnClientConnect(){
+        while(!NetworkClient.isConnected){
+            Debug.Log(NetworkClient.isConnected);
+            yield return new WaitForSeconds(1);
+        }
+        Debug.Log(NetworkClient.isConnected);
         NetworkClient.connection.Send<ReceiveAuthenticateMessage>(new ReceiveAuthenticateMessage()
         {
-            PlayFabId = success.PlayFabId
+            PlayFabId = playFabId
         });
+        Debug.Log("Authenticate message sent");
     }
 }

@@ -16,14 +16,17 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
     public bool isAttack;
     public string playerName;
     public int teamIndex;
-    public int roomPlayTime = 60;
+    public int roomPlayTime = 10;
     GameObject[] players;
-    bool shutdown;
+    bool shutdown,loading;
+    public static NetworkLobbyManagerCustomised Instance { get; private set; }
+
     public override void OnRoomStartServer()
     {
         //Get list of spawnable prefabs on start server
         base.OnRoomStartServer();
         players = Resources.LoadAll<GameObject>("SpawnablePrefabs/");
+        loading = false;
     }
 
     public override void OnRoomStartClient()
@@ -88,6 +91,8 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         }
         player.GetComponent<States>().teamIndex = teamIndex;
         player.GetComponent<States>().isAttack = LobbyResources.playerTeamAttack[index];
+        Debug.Log(teamIndex);
+        Debug.Log(player);
         return player;
     }
 
@@ -140,18 +145,26 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         base.OnRoomServerSceneChanged(sceneName);
         if (sceneName.Contains("RoomScene"))
         {
+            foreach (string name in LobbyResources.playerNamesAtk)
+            {
+                Debug.Log(name);
+            }
             //For Testing! Using 10s to change to final scene now
             StartCoroutine(CountdownToFinale(roomPlayTime));
         } else if (sceneName.Contains("FinalBattle")){
             //NetworkClient.localPlayer.gameObject.transform.Find("Local Camera").
             //    GetComponent<Camera>().enabled = true;
             //NetworkClient.localPlayer.gameObject.GetComponent<FinalBattleBehaviour>().enabled = true;
-
+            foreach (string name in LobbyResources.playerNamesAtk)
+            {
+                Debug.Log(name);
+            }
         }
     }
-
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
+        /* loading = true;
+        AwaitServerLoad(); */
         base.OnClientSceneChanged(conn);
         if (SceneManager.GetActiveScene().name.Contains("FinalBattle"))
         {
@@ -242,6 +255,21 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             
         }
     }
+    /* IEnumerator AwaitServerLoad(){
+        while (loading)
+        {
+            Debug.Log("AwaitServerLoad");
+            yield return new WaitForSeconds(1);
+        }
+    }
+    [Server]
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode){
+        Debug.Log("Sever done loading " + scene.name);
+        GameObject.FindGameObjectWithTag("NetworkRpc").GetComponent<NetworkRpc>().ClientSceneChangeRpc(scene.name);
+    }
+    public void LoadingComplete(string name){
+        loading = false;
+    } */
 
     IEnumerator CountdownToFinale(int seconds)
     {
@@ -254,6 +282,140 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             yield return new WaitForSeconds(1);
             LobbyResources.timer++;
         }
+        Debug.Log("CountdownToFinale ended");
+        if (configuration.buildType == BuildType.REMOTE_CLIENT){
+            NetworkClient.Ready();
+        } else if (configuration.buildType == BuildType.REMOTE_SERVER){
+            GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+            foreach (GameObject player in players)
+            {
+                Debug.Log("DDOL "+player);
+                DontDestroyOnLoad(player);
+            }
+            Debug.Log("Awaiting Clients");
+            StartCoroutine(AwaitClientReady());
+        } else {
+            ServerChangeScene("FinalBattle");
+        }
+    }
+    IEnumerator AwaitClientReady(){
+        bool allReady = false;
+        while (!allReady){
+            allReady = true;
+            yield return new WaitForSeconds(0.05f);
+            foreach (KeyValuePair<int,NetworkConnectionToClient> pair in NetworkServer.connections)
+            {
+                NetworkConnectionToClient conn = pair.Value;
+                Debug.Log(conn.isReady);
+                if (conn.isReady == false) allReady = false;
+                /* Debug.Log("Before " + conn.isReady);
+                if (!conn.isReady) NetworkServer.SetClientReady(conn);
+                Debug.Log("After " + conn.isReady); */
+            }
+        }
         ServerChangeScene("FinalBattle");
     }
+    public PlayerEvent OnPlayerAdded = new PlayerEvent();
+    public PlayerEvent OnPlayerRemoved = new PlayerEvent();
+
+    public int MaxConnections = 6;
+    public int Port = 7777;
+
+    public List<UnityNetworkConnection> Connections
+    {
+        get { return _connections; }
+        private set { _connections = value; }
+    }
+    private List<UnityNetworkConnection> _connections = new List<UnityNetworkConnection>();
+
+    public class PlayerEvent : UnityEvent<string> { }
+
+    public override void Awake()
+    {
+        base.Awake();
+        Instance = this;
+        NetworkServer.RegisterHandler<ReceiveAuthenticateMessage>(OnReceiveAuthenticate);
+        /* if (configuration.buildType == BuildType.REMOTE_SERVER){
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        } */
+        //_netManager.transport.port = Port;
+    }
+
+    public void StartListen()
+    {
+        //NetworkServer.Listen(MaxConnections);
+    }
+
+    public override void OnApplicationQuit()
+    {
+        base.OnApplicationQuit();
+        NetworkServer.Shutdown();
+    }
+
+    private void OnReceiveAuthenticate(NetworkConnection nconn, ReceiveAuthenticateMessage message)
+    {
+        var conn = _connections.Find(c => c.ConnectionId == nconn.connectionId);
+        Debug.Log("OnReceiveAuthenticate conn: " + conn);
+        Debug.Log("PlayfabId: " + message.PlayFabId);
+        if(conn != null)
+        {
+            conn.PlayFabId = message.PlayFabId;
+            conn.IsAuthenticated = true;
+            OnPlayerAdded.Invoke(message.PlayFabId);
+        }
+    }
+    
+
+    public override void OnServerConnect(NetworkConnection conn)
+    {
+        base.OnServerConnect(conn);
+        Debug.LogWarning("Client Connected");
+        var uconn = _connections.Find(c => c.ConnectionId == conn.connectionId);
+        if (uconn == null)
+        {
+            _connections.Add(new UnityNetworkConnection()
+            {
+                Connection = conn,
+                ConnectionId = conn.connectionId,
+                LobbyId = PlayFabMultiplayerAgentAPI.SessionConfig.SessionId
+            });
+        }
+    }
+
+    public override void OnServerDisconnect(NetworkConnection conn)
+    {
+        base.OnServerDisconnect(conn);
+        var uconn = _connections.Find(c => c.ConnectionId == conn.connectionId);
+        if (uconn != null)
+        {
+            if (!string.IsNullOrEmpty(uconn.PlayFabId))
+            {
+                OnPlayerRemoved.Invoke(uconn.PlayFabId);
+            }
+            _connections.Remove(uconn);
+        }
+    }
 }
+[Serializable]
+public class UnityNetworkConnection
+{
+    public bool IsAuthenticated;
+    public string PlayFabId;
+    public string LobbyId;
+    public int ConnectionId;
+    public NetworkConnection Connection;
+}
+
+public class CustomGameServerMessageTypes
+{
+    public const short ReceiveAuthenticate = 900;
+    public const short ShutdownMessage = 901;
+    public const short MaintenanceMessage = 902;
+}
+
+public struct ReceiveAuthenticateMessage : NetworkMessage
+{
+    public string PlayFabId;
+}
+
+public struct ShutdownMessage : NetworkMessage {}

@@ -16,13 +16,14 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     bool hasChosenCharacter = false;
     [SyncVar]
     public int spriteIndex;
-    public string displayName { get; set; } = null;
+    [SyncVar]
+    public string displayName; //{ get; set; } = null;
+    [SyncVar]
     public bool isAttack;
     
     [SyncVar]
     public int teamIndex;
     private int _winGame = 0;
-
     private bool slowCooldown;
     private bool scrambleCooldown;
     private bool startingUp = false;
@@ -46,7 +47,6 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                         endscreen.SetActive(true);
                         GameObject.FindGameObjectWithTag("UI").transform.GetChild(1).gameObject.SetActive(false);
                         endscreen.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(Quit);
-                        EndGame();
                     }
                 }
                 else if (_winGame == -1)
@@ -59,7 +59,6 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
                         endscreen.SetActive(true);
                         GameObject.FindGameObjectWithTag("UI").transform.GetChild(0).gameObject.SetActive(false);
                         endscreen.transform.GetChild(0).GetComponent<Button>().onClick.AddListener(Quit);
-                        EndGame();
                     }
                 }
             }
@@ -283,6 +282,21 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
         // Starts game only when all clients are readied
         readyToBegin = true;
         CmdChangeReadyState(readyToBegin);
+        //StartCoroutine(DelayedStart());
+        /* if (GameObject.FindGameObjectWithTag("NetworkManager").
+            GetComponent<NetworkLobbyManagerCustomised>().allPlayersReady == false)
+        {
+            message.GetComponent<TextMeshProUGUI>().SetText("Not every player is ready!");
+            StartCoroutine(removeText());
+            readyToBegin = false;
+            CmdChangeReadyState(readyToBegin);
+            //uncomment if want host to ready again before starting game
+            //GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(1).GetChild(0).gameObject.SetActive(true);
+            //GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(1).GetChild(1).gameObject.SetActive(false);
+        } */
+    }
+    IEnumerator DelayedStart(){
+        yield return new WaitForSeconds(3);
         if (GameObject.FindGameObjectWithTag("NetworkManager").
             GetComponent<NetworkLobbyManagerCustomised>().allPlayersReady == false)
         {
@@ -295,7 +309,6 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
             //GameObject.FindGameObjectWithTag("Lobby").transform.GetChild(1).GetChild(1).gameObject.SetActive(false);
         }
     }
-
     private void ChooseCharacter()
     {
         GameObject chooseChar = lobby.transform.GetChild(2).gameObject;
@@ -332,7 +345,7 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
 
     private IEnumerator enableChooseCharacter()
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.5f);
         Button chooseChar;
         if (isAttack)
         {

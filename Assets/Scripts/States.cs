@@ -26,10 +26,12 @@ public class States : NetworkBehaviour
     List<GameObject> atkPlayers,defPlayers;
     bool timeIsRunning;
     public bool playingMinigame = false;
+    [SyncVar]
     public Vector3 spawnPos;
     RoomResources roomResources;
     GameHandler gameHandlerComponent;
     MiningAI miningAI;
+    [SyncVar]
     public int teamIndex;
     public int resourcesGained = 0;
     public bool fixingSabotage;
@@ -37,12 +39,13 @@ public class States : NetworkBehaviour
     private bool colorChanged = false;
     TextMeshProUGUI message;
     TextMeshProUGUI timer;
-    public int timeleft = 120;
+    public int timeleft = 10;
 
     public bool saboCD;
     public bool intelCD;
     public bool firewallCD;
     private int _finishGame = 0;
+    bool finalBattleUpdate = false;
     public int finishGame
     {
         get { return _finishGame; }
@@ -205,14 +208,8 @@ public class States : NetworkBehaviour
                         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
                         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     }
-                    GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-                    foreach (GameObject player in players)
-                    {
-                        DontDestroyOnLoad(player);
-                    }
                 }
             }
-
             if (winIntelGame)
             {
                 // to add notification on winning the minigame
@@ -316,11 +313,9 @@ public class States : NetworkBehaviour
 
                         EnableA:
                             name.enabled = true;
-                            Debug.Log(name.enabled);
                             break;
                         DisableA:
                             name.enabled = false;
-                            Debug.Log(name.enabled);
                             break;
                     }
                 } else {
@@ -338,18 +333,33 @@ public class States : NetworkBehaviour
 
                         EnableB:
                             name.enabled = true;
-                            Debug.Log(name.enabled);
                             break;
                         DisableB:
                             name.enabled = false;
-                            Debug.Log(name.enabled);
                             break;
                     }
                 }
             }
+        } else {
+            if (!finalBattleUpdate && SceneManager.GetActiveScene().name.Contains("FinalBattle")){
+                finalBattleUpdate = true;
+                GetComponentInChildren<TextMeshProUGUI>().SetText(displayName);
+
+                if (NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack == isAttack){
+                    GameObject mainVision = transform.Find("Vision").gameObject;
+                    mainVision.SetActive(true);
+                }
+                if (isAttack)
+                {
+                    GetComponentInChildren<TextMeshProUGUI>().color = new Color(255/255.0f, 185/255.0f, 185/255.0f);
+                }
+                else
+                {
+                    GetComponentInChildren<TextMeshProUGUI>().color = new Color(184/255.0f, 233/255.0f, 255/255.0f);
+                }
+            }
         }
     }
-
     IEnumerator setText(string newMsg)
     {
         message.SetText(message.text + newMsg);

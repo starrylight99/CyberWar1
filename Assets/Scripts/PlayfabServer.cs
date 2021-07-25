@@ -9,7 +9,6 @@ using PlayFab.MultiplayerAgent.Model;
 public class PlayfabServer : MonoBehaviour {
     private List<ConnectedPlayer> _connectedPlayers;
     public bool Debugging = true;
-    public UnityNetworkServer unityNetworkServer;
     // Use this for initialization
     void Start () {
 		Configuration configuration = GameObject.FindGameObjectWithTag("Configuration").GetComponent<Configuration>();
@@ -24,8 +23,8 @@ public class PlayfabServer : MonoBehaviour {
 			PlayFabMultiplayerAgentAPI.OnServerActiveCallback += OnServerActive;
 			PlayFabMultiplayerAgentAPI.OnAgentErrorCallback += OnAgentError;
 
-			unityNetworkServer.OnPlayerAdded.AddListener(OnPlayerAdded);
-			unityNetworkServer.OnPlayerRemoved.AddListener(OnPlayerRemoved);
+			NetworkLobbyManagerCustomised.Instance.OnPlayerAdded.AddListener(OnPlayerAdded);
+			NetworkLobbyManagerCustomised.Instance.OnPlayerRemoved.AddListener(OnPlayerRemoved);
 
 			StartCoroutine(ReadyForPlayers());
             StartCoroutine(ShutdownServerInXTime());
@@ -40,7 +39,7 @@ public class PlayfabServer : MonoBehaviour {
     
     private void OnServerActive()
     {
-        //unityNetworkServer.StartServer();
+        NetworkLobbyManagerCustomised.Instance.StartListen();
         Debug.Log("Server Started From Agent Activation");
     }
 
@@ -53,6 +52,7 @@ public class PlayfabServer : MonoBehaviour {
 
     private void OnPlayerAdded(string playfabId)
     {
+        Debug.Log("OnPlayerAdded Invoked. PlayfabId: " + playfabId);
         _connectedPlayers.Add(new ConnectedPlayer(playfabId));
         PlayFabMultiplayerAgentAPI.UpdateConnectedPlayers(_connectedPlayers);
     }
