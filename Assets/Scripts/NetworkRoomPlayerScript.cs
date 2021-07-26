@@ -28,12 +28,6 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
     private bool scrambleCooldown;
     private bool startingUp = false;
     private bool finaleReady = false;
-    private void Start() {
-        base.Start();
-        if (isLocalPlayer){
-            NetworkClient.RegisterHandler<ReceiveDisconnectMessage>(OnReceiveDisconnect);
-        }
-    }
     public int winGame { 
         // Property to detect when the game is won or lost
         // bool might work but i set as int already lol
@@ -80,6 +74,9 @@ public class NetworkRoomPlayerScript : NetworkRoomPlayer
         // initialise lobby, readyScene, players as well for ease of reference
         // Start listening for ready and quit buttons
         base.OnStartLocalPlayer();
+        if (isLocalPlayer){
+            NetworkClient.RegisterHandler<ReceiveDisconnectMessage>(OnReceiveDisconnect);
+        }
         displayName = GameObject.FindGameObjectWithTag("NetworkManager").
             GetComponent<NetworkLobbyManagerCustomised>().playerName;
         isAttack = GameObject.FindGameObjectWithTag("NetworkManager").

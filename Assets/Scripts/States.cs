@@ -158,6 +158,14 @@ public class States : NetworkBehaviour
     public override void OnStartLocalPlayer()
     {
         base.OnStartLocalPlayer();
+        //NetworkClient.Ready();
+        StartCoroutine(AwaitReady());
+    }
+    IEnumerator AwaitReady(){
+        while(!NetworkClient.ready){
+            Debug.Log("Still not ready");
+            yield return new WaitForSeconds(0.5f);
+        }
         CmdSetName();
         timeIsRunning = true;
         

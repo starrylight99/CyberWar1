@@ -996,6 +996,12 @@ namespace Mirror
         internal void OnDeserializeAllSafely(NetworkReader reader, bool initialState)
         {
             // deserialize all components that were received
+            Debug.Log(NetworkBehaviours);
+            if (NetworkBehaviours == null){
+                Debug.Log("Trying to get new network Behaviours");
+                NetworkBehaviours = GetComponents<NetworkBehaviour>();
+                Debug.Log("Result: " + NetworkBehaviours);
+            }
             NetworkBehaviour[] components = NetworkBehaviours;
             while (reader.Position < reader.Length)
             {

@@ -857,11 +857,12 @@ namespace Mirror
             // NOTE: It can be "normal" when changing scenes for the player to be destroyed and recreated.
             // But, the player structures are not cleaned up, we'll just replace the old player
             localPlayer = identity;
-
+            Debug.Log(identity);
             // NOTE: we DONT need to set isClient=true here, because OnStartClient
             // is called before OnStartLocalPlayer, hence it's already set.
             // localPlayer.isClient = true;
-
+            Debug.Log(ready);
+            Debug.Log(connection);
             // TODO this check might not be necessary
             //if (readyConnection != null)
             if (ready && connection != null)
@@ -870,7 +871,6 @@ namespace Mirror
             }
             else Debug.LogWarning("No ready connection found for setting player controller during InternalAddPlayer");
         }
-
         /// <summary>Sends AddPlayer message to the server, indicating that we want to join the world.</summary>
         public static bool AddPlayer()
         {

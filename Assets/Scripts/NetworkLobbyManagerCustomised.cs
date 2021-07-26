@@ -18,7 +18,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
     public int teamIndex;
     public int roomPlayTime = 120;
     GameObject[] players;
-    bool shutdown,loading;
+    bool shutdown;
     public static NetworkLobbyManagerCustomised Instance { get; private set; }
 
     public override void OnRoomStartServer()
@@ -26,7 +26,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         //Get list of spawnable prefabs on start server
         base.OnRoomStartServer();
         players = Resources.LoadAll<GameObject>("SpawnablePrefabs/");
-        loading = false;
     }
 
     public override void OnRoomStartClient()
@@ -161,20 +160,46 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             }
         }
     }
+    // Called on client
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
         /* loading = true;
         AwaitServerLoad(); */
-        base.OnClientSceneChanged(conn);
         if (SceneManager.GetActiveScene().name.Contains("FinalBattle"))
         {
-            StartCoroutine(AwaitLocalClientReady(conn));
-            
-        } else {
             base.OnClientSceneChanged(conn);
+            StartCoroutine(AwaitFinalLocalClientReady(conn));
+        } else if (SceneManager.GetActiveScene().name.Contains("RoomScene")){
+            StartCoroutine(AwaitRoomLocalClientReady(conn));
         }
     }
-    IEnumerator AwaitLocalClientReady(NetworkConnection conn){
+    // Called on client when scene change + networking is done
+    public override void OnRoomClientSceneChanged(NetworkConnection conn) {
+        //StartCoroutine(WaitThreeSeconds(conn));
+        base.OnRoomClientSceneChanged(conn);
+        Debug.Log("Scene Changing on Client");
+    }
+    IEnumerator WaitThreeSeconds(NetworkConnection conn){
+        Debug.Log("Waiting 3 sec");
+        yield return new WaitForSeconds(3);
+        base.OnRoomClientSceneChanged(conn);
+        Debug.Log("Scene Changed on Client");
+    }
+
+    public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer, GameObject gamePlayer)
+    {
+        Debug.Log("OnRoomServerSceneLoadedForPlayer");
+        return true;
+    }
+    IEnumerator AwaitRoomLocalClientReady(NetworkConnection conn){
+        Debug.Log(conn.isReady);
+        while(!conn.isReady){
+            yield return new WaitForSeconds(0.5f);
+            Debug.Log(conn.isReady);
+        }
+        base.OnClientSceneChanged(conn);
+    }
+    IEnumerator AwaitFinalLocalClientReady(NetworkConnection conn){
         NetworkClient.localPlayer.gameObject.GetComponent<States>().enabled = false;
         NetworkClient.localPlayer.gameObject.GetComponent<Move>().enabled = false;
         while (!NetworkClient.ready)
@@ -217,7 +242,7 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
             {
                 if (GameResources.defResourceAmount > 35)
                 {
-                    playerMove.slowPercent = 0.60f;
+                    playerMove.slowPercent = 0.40f;
                     playerMove.confusedDuration = 6f;
                 }
                 else if (GameResources.defResourceAmount > 20)
@@ -227,17 +252,17 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
                 }
                 else if (GameResources.defResourceAmount > 10)
                 {
-                    playerMove.slowPercent = 0.40f;
+                    playerMove.slowPercent = 0.60f;
                     playerMove.confusedDuration = 4f;
                 }
                 else if (GameResources.defResourceAmount > 5)
                 {
-                    playerMove.slowPercent = 0.30f;
+                    playerMove.slowPercent = 0.70f;
                     playerMove.confusedDuration = 3f;
                 }
                 else
                 {
-                    playerMove.slowPercent = 0.20f;
+                    playerMove.slowPercent = 0.80f;
                     playerMove.confusedDuration = 2f;
                 }
             }

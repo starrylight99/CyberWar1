@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -503,6 +504,22 @@ namespace Mirror
         /// <param name="conn">Connection of the client</param>
         public override void OnClientSceneChanged(NetworkConnection conn)
         {
+            //StartCoroutine(WaitThreeSeconds(conn));
+            if (IsSceneActive(RoomScene))
+            {
+                if (NetworkClient.isConnected)
+                    CallOnClientEnterRoom();
+            }
+            else
+                CallOnClientExitRoom();
+
+            base.OnClientSceneChanged(conn);
+            OnRoomClientSceneChanged(conn);
+        }
+        IEnumerator WaitThreeSeconds(NetworkConnection conn){
+            Debug.Log("3 sec started");
+            yield return new WaitForSeconds(3);
+            Debug.Log("3 sec finished");
             if (IsSceneActive(RoomScene))
             {
                 if (NetworkClient.isConnected)

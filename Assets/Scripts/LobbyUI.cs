@@ -29,6 +29,7 @@ public class LobbyUI : MonoBehaviour
     bool host;
     String playFabId;
     PlayFabAuthService _authService;
+    string ip,port,roomName;
     void Start()
     {
         _authService = PlayFabAuthService.Instance;
@@ -230,19 +231,22 @@ public class LobbyUI : MonoBehaviour
 
 	private void ConnectRemoteClient(RequestMultiplayerServerResponse response = null)
 	{
+        roomName = GameObject.FindGameObjectWithTag("MatchId").GetComponent<TMP_InputField>().text;
+        Debug.Log(roomName);
 		if(response == null) 
 		{
-			networkManager.networkAddress = configuration.ipAddress;
-			telepathyTransport.port = configuration.port;
+            GetRoomDetails();
 		}
 		else
 		{
 			Debug.Log("IP: " + response.IPV4Address + " Port: " + (ushort)response.Ports[0].Num);
+            ip = response.IPV4Address;
+            ushort portInt = (ushort)response.Ports[0].Num;
+            port = portInt.ToString();
 			networkManager.networkAddress = response.IPV4Address;
 			telepathyTransport.port = (ushort)response.Ports[0].Num;
-		}
-
-		_authService.Authenticate();
+            _authService.Authenticate();
+        }
 	}
 
 	private void OnRequestMultiplayerServerError(PlayFabError error)
@@ -280,5 +284,83 @@ public class LobbyUI : MonoBehaviour
             PlayFabId = playFabId
         });
         Debug.Log("Authenticate message sent");
+        
+        if (host){
+            CreateRoom();
+        }
     }
-}
+    //Create Room
+    private void CreateRoom(){
+        CreateSharedGroupRequest request = new CreateSharedGroupRequest(){
+            SharedGroupId = roomName
+        };
+        PlayFabClientAPI.CreateSharedGroup(request,OnCreateRoomSuccess,OnCreateRoomFailed);
+    }
+    private void OnCreateRoomSuccess(CreateSharedGroupResult result){
+        Debug.Log("Create Group Success");
+        Debug.Log(result);
+        UpdateRoom();
+    }
+    private void OnCreateRoomFailed(PlayFabError error){
+        Debug.LogWarning("Create Group Failed");
+        Debug.Log(error.ErrorDetails);
+    }
+    //Update group details
+    private void UpdateRoom(){
+        Dictionary<string,string> data = new Dictionary<string,string>(){
+            {"ip",ip},
+            {"port",port}
+        };
+        UpdateSharedGroupDataRequest request = new UpdateSharedGroupDataRequest(){
+            SharedGroupId = roomName,
+            Data = data,
+            //KeysToRemove = [],
+            Permission = UserDataPermission.Public
+            //CustomTags = null
+        };
+        PlayFabClientAPI.UpdateSharedGroupData(request,OnUpdateRoomSuccess,OnUpdateRoomFailed);
+    }
+    private void OnUpdateRoomSuccess(UpdateSharedGroupDataResult result){
+        Debug.Log("Update Details Success");
+        Debug.Log(result);
+    }
+    private void OnUpdateRoomFailed(PlayFabError error){
+        Debug.LogWarning("Update Details Failed");
+        Debug.Log(error.ErrorDetails);
+        Debug.Log(error.Error);
+        Debug.Log(error.ErrorMessage);
+        Debug.Log(error.HttpCode);
+        foreach(KeyValuePair<string, List<String>> data in error.ErrorDetails) {
+            Debug.Log(data.Key);
+            foreach (var item in data.Value)
+            {   
+                Debug.Log(item);
+            }
+        }
+    }
+
+    // Get Room details
+    private void GetRoomDetails(){
+        GetSharedGroupDataRequest request = new GetSharedGroupDataRequest(){
+            SharedGroupId = roomName
+        };
+        PlayFabClientAPI.GetSharedGroupData(request,OnGetRoomDetailsSuccess,OnGetRoomDetailsFailed);
+    }
+    private void OnGetRoomDetailsSuccess(GetSharedGroupDataResult result){
+        Debug.Log("Get Group Success");
+        Debug.Log(result.Data);
+        foreach(KeyValuePair<string, SharedGroupDataRecord> data in result.Data) {
+            if (data.Key == "ip"){
+                networkManager.networkAddress = data.Value.Value;
+            } else if (data.Key == "port"){
+                telepathyTransport.port = Convert.ToUInt16(data.Value.Value);
+            }
+            Debug.Log(data.Key + " : " + data.Value.Value);
+        }
+        _authService.Authenticate();
+    }
+    private void OnGetRoomDetailsFailed(PlayFabError error){
+        Debug.LogWarning("Get Group Failed");
+        Debug.Log(error);
+    }
+}  
