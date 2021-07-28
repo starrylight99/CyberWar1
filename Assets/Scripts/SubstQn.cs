@@ -185,7 +185,7 @@ public class SubstQn : MonoBehaviour
         text.AddComponent<TextMeshProUGUI>().SetText(shuffle[letter].ToString());
         text.GetComponent<RectTransform>().anchoredPosition = new Vector3(0f, 0f);
         text.GetComponent<RectTransform>().sizeDelta = new Vector2(20f, 20f);
-        text.GetComponent<TextMeshProUGUI>().fontSize = 14;
+        text.GetComponent<TextMeshProUGUI>().fontSize = 10;
         text.GetComponent<TextMeshProUGUI>().color = new Color(0f, 0f, 0f);
         text.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
     }

@@ -72,6 +72,7 @@ public class FirewallGame : MonoBehaviour
         accept = game.transform.GetChild(1).GetComponent<Button>();
         reject = game.transform.GetChild(2).GetComponent<Button>();
         inst1.GetComponentInChildren<Button>().onClick.AddListener(Inst1ToInst2);
+        transform.GetChild(3).GetComponent<Button>().onClick.AddListener(EndGame);
     }
 
     private void Inst1ToInst2()

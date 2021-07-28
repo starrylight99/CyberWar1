@@ -249,7 +249,7 @@ public class ST_PuzzleDisplay : MonoBehaviour
 		if (Complete)
 		{
 			Debug.Log("Puzzle Complete!");
-            player.GetComponent<States>().fixedSabotage = true;
+            player.GetComponent<States>().saboStatus = 2;
             player.transform.GetChild(0).gameObject.SetActive(true);
             player.transform.GetChild(0).GetComponent<AudioListener>().enabled = true;
             player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;

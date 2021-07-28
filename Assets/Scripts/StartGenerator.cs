@@ -9,7 +9,6 @@ using UnityEngine.EventSystems;
 public class StartGenerator : NetworkBehaviour
 {
     GameObject player;
-    // Start is called before the first frame update
     float r = 8f;
     Camera miningCam,playerCam;
     RigidbodyConstraints2D originalConstraints;
@@ -19,11 +18,6 @@ public class StartGenerator : NetworkBehaviour
     void Start()
     {
         backButton.GetComponent<Button>().onClick.AddListener(delegate {
-            /* player = NetworkClient.localPlayer.gameObject;
-            playerCam = GameObject.FindGameObjectWithTag("Player").transform.Find("Local Camera").GetComponent<Camera>();
-            miningCam = transform.Find("Mining/Environment/MiningCamera").GetComponent<Camera>(); */
-            /* Debug.Log(miningCam);
-            Debug.Log(playerCam); */
             miningCam.enabled = false;
             playerCam.enabled = true;
             backButton.SetActive(false);
@@ -46,7 +40,7 @@ public class StartGenerator : NetworkBehaviour
         {
             if (player.GetComponent<States>().sabotaged)
             {
-                player.GetComponent<States>().fixingSabotage = true;
+                player.GetComponent<States>().saboStatus = 1;
                 player.transform.GetChild(0).GetComponent<AudioListener>().enabled = false;
                 player.GetComponent<Rigidbody2D>().constraints =
                     RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
@@ -77,15 +71,11 @@ public class StartGenerator : NetworkBehaviour
                         cam.GetComponent<Camera>().enabled = false;
                     }
                 }
-                /* Debug.Log(playerCam);
-                Debug.Log(miningCam); */
                 playerCam.enabled = false;
                 miningCam.enabled = true;
                 backButton.SetActive(true);
                 gameObject.GetComponent<StartGenerator>().enabled = false;
             }
-        } else {
-            Debug.Log("Please go in closer");
         }
     }
 }

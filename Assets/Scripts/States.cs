@@ -22,6 +22,8 @@ public class States : NetworkBehaviour
     public bool isAttack;
     [SyncVar]
     public bool sabotaged;
+    [SyncVar]
+    public bool isFixing;
     public int startTime;
     List<GameObject> atkPlayers,defPlayers;
     bool timeIsRunning;
@@ -34,8 +36,6 @@ public class States : NetworkBehaviour
     [SyncVar]
     public int teamIndex;
     public int resourcesGained = 0;
-    public bool fixingSabotage;
-    public bool fixedSabotage;
     private bool colorChanged = false;
     TextMeshProUGUI message;
     TextMeshProUGUI timer;
@@ -93,6 +93,28 @@ public class States : NetworkBehaviour
                     GameObject.FindGameObjectWithTag("Defend").transform.GetChild(1)
                         .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
                 }
+            }
+        }
+    }
+
+    private int _saboStatus;
+    public int saboStatus
+    {
+        get { return _saboStatus; }
+        set
+        {
+            _saboStatus = value;
+            if (_saboStatus == 1) // player fixing sabotage
+            {
+                CmdFixSabotage(isAttack, true);
+            }
+            else if (_saboStatus == 2) // player fixed sabotage
+            {
+                CmdFixedSabotage(isAttack);
+            }
+            else if (_saboStatus == 3) // player cant fix sabotage
+            {
+                CmdFixSabotage(isAttack, false);
             }
         }
     }
@@ -263,7 +285,7 @@ public class States : NetworkBehaviour
                     string newMsg = "Check your generator!\n";
                     StartCoroutine(setText(newMsg));
                 }
-                else if (!sabotaged && colorChanged)
+                else if (!sabotaged && colorChanged && !isFixing)
                 {
                     if (isAttack)
                     {
@@ -278,17 +300,8 @@ public class States : NetworkBehaviour
                     colorChanged = false;
                     string newMsg = "Generator Fixed!\n";
                     StartCoroutine(setText(newMsg));
+                    saboStatus = 0;
                 }
-            }
-            if (fixingSabotage)
-            {
-                fixingSabotage = false;
-                CmdFixSabotage(isAttack);
-            }
-            if (fixedSabotage)
-            {
-                fixedSabotage = false;
-                CmdFixedSabotage(isAttack);
             }
             if (SceneManager.GetActiveScene().name == "FinalBattle") {
                 atkPlayers = new List<GameObject>(); defPlayers = new List<GameObject>();
@@ -515,7 +528,7 @@ public class States : NetworkBehaviour
     }
 
     [Command]
-    void CmdFixSabotage(bool isAttack)
+    void CmdFixSabotage(bool isAttack, bool fixing)
     {
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
         foreach (GameObject player in players)
@@ -523,7 +536,11 @@ public class States : NetworkBehaviour
             States playerState = player.GetComponent<States>();
             if (playerState.isAttack == isAttack)
             {
-                playerState.sabotaged = false;
+                playerState.sabotaged = !fixing;
+                if (fixing)
+                {
+                    playerState.isFixing = fixing;
+                }
             }
         }
     }
@@ -541,6 +558,15 @@ public class States : NetworkBehaviour
             miner = GameObject.FindGameObjectWithTag("DefMiner");
         }
         miner.GetComponent<MiningAI>().sabotaged = false;
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject player in players)
+        {
+            States playerState = player.GetComponent<States>();
+            if (playerState.isAttack == isAttack)
+            {
+                playerState.isFixing = false;
+            }
+        }
     }
 
 }
