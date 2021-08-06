@@ -105,6 +105,10 @@ public class MiningAI : NetworkBehaviour {
         idle = false;
         desiredPosition = position;
         desiredVelocity = (position - rb.position).normalized * speed;
+        Vector2 dir = (new Vector2(transform.position.x, transform.position.y) - position).normalized;
+        float angle = Mathf.Atan2(dir.y, dir.x) * 180 / Mathf.PI;
+        angle = ((dir.x < 0) && (dir.y < 0)) ? angle += 270 : angle -= 90;
+        transform.eulerAngles = new Vector3(0, 0, angle);
         sqrMag = (position - rb.position).sqrMagnitude;
         yield return new WaitUntil(() => desiredVelocity == Vector2.zero);
         onArrivedAtPosition();

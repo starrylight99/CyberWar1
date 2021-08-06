@@ -90,8 +90,6 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
         }
         player.GetComponent<States>().teamIndex = teamIndex;
         player.GetComponent<States>().isAttack = LobbyResources.playerTeamAttack[index];
-        Debug.Log(teamIndex);
-        Debug.Log(player);
         return player;
     }
 

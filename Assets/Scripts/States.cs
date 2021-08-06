@@ -44,6 +44,8 @@ public class States : NetworkBehaviour
     public bool saboCD;
     public bool intelCD;
     public bool firewallCD;
+    public bool generatorCD;
+
     private int _finishGame = 0;
     bool finalBattleUpdate = false;
     public int finishGame
@@ -77,6 +79,27 @@ public class States : NetworkBehaviour
                 else
                 {
                     GameObject.FindGameObjectWithTag("Defend").transform.GetChild(2)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                }
+            }
+            else if (_finishGame == 4)
+            {
+                saboCD = true;
+                intelCD = true;
+                firewallCD = true;
+                generatorCD = true;
+                if (isAttack)
+                {
+                    GameObject.FindGameObjectWithTag("Attack").transform.GetChild(2)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                    GameObject.FindGameObjectWithTag("Attack").transform.GetChild(3)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                }
+                else
+                {
+                    GameObject.FindGameObjectWithTag("Defend").transform.GetChild(2)
+                        .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                    GameObject.FindGameObjectWithTag("Defend").transform.GetChild(3)
                         .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
                 }
             }
@@ -238,6 +261,7 @@ public class States : NetworkBehaviour
                         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
                         GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
                     }
+                    finishGame = 4;
                 }
             }
             if (winIntelGame)
@@ -322,10 +346,8 @@ public class States : NetworkBehaviour
                     foreach (GameObject defPlayer in defPlayers)
                     {
                         Behaviour name = (Behaviour)(defPlayer.GetComponentInChildren(typeof(TextMeshProUGUI), true));
-                        Debug.Log(name);
                         foreach (GameObject atkPlayer in atkPlayers)
                         {
-                            Debug.Log(Vector3.Distance(atkPlayer.transform.position, defPlayer.transform.position) < playerLight.pointLightOuterRadius);
                             if (Vector3.Distance(atkPlayer.transform.position, defPlayer.transform.position) < playerLight.pointLightOuterRadius){
                                 goto EnableA;
                             }
@@ -343,7 +365,6 @@ public class States : NetworkBehaviour
                     foreach (GameObject atkPlayer in atkPlayers)
                     {
                         Behaviour name = (Behaviour)(atkPlayer.GetComponentInChildren(typeof(TextMeshProUGUI), true));
-                        Debug.Log(name);
                         foreach (GameObject defPlayer in defPlayers)
                         {
                             if (Vector3.Distance(atkPlayer.transform.position, defPlayer.transform.position) < playerLight.pointLightOuterRadius){
@@ -567,6 +588,11 @@ public class States : NetworkBehaviour
                 playerState.isFixing = false;
             }
         }
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
     }
 
 }
