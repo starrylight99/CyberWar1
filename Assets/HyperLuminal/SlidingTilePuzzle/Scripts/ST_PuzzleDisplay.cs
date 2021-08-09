@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.EventSystems;
 
 public class ST_PuzzleDisplay : MonoBehaviour
 {
@@ -255,7 +255,8 @@ public class ST_PuzzleDisplay : MonoBehaviour
             player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.None;
             player.GetComponent<Rigidbody2D>().constraints = RigidbodyConstraints2D.FreezeRotation;
             player.GetComponent<States>().playingMinigame = false;
-            SceneManager.UnloadSceneAsync("SlidingPuzzleScene");
+			GameObject.FindGameObjectWithTag("RoomEventSystem").GetComponent<EventSystem>().enabled = true;
+			SceneManager.UnloadSceneAsync("SlidingPuzzleScene");
         }
 
         yield return null;

@@ -42,6 +42,7 @@ public class StartGenerator : NetworkBehaviour
             {
                 if (player.GetComponent<States>().sabotaged)
                 {
+                    GameObject.FindGameObjectWithTag("RoomEventSystem").GetComponent<EventSystem>().enabled = false;
                     player.GetComponent<States>().saboStatus = 1;
                     player.transform.GetChild(0).GetComponent<AudioListener>().enabled = false;
                     player.GetComponent<Rigidbody2D>().constraints =

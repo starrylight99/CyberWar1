@@ -69,6 +69,15 @@ public class LobbyUI : MonoBehaviour
         }
     }
 
+    public void showTutorial()
+    {
+        transform.GetChild(3).gameObject.SetActive(true);
+    }
+
+    public void closeTutorial()
+    {
+        transform.GetChild(3).gameObject.SetActive(false);
+    }
 
     public void Host()
     {
@@ -84,10 +93,10 @@ public class LobbyUI : MonoBehaviour
             StartCoroutine(removeText());
             return;
         }
-        displayName.interactable = false;
-        joinMatchInput.interactable = false;
-        joinButton.interactable = false;
-        hostButton.interactable = false;
+        //displayName.interactable = false;
+        //joinMatchInput.interactable = false;
+        //joinButton.interactable = false;
+        //hostButton.interactable = false;
 
         configuration = GameObject.FindGameObjectWithTag("Configuration").GetComponent<Configuration>();
         networkManager = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkLobbyManagerCustomised>();
@@ -126,10 +135,10 @@ public class LobbyUI : MonoBehaviour
             StartCoroutine(removeText());
             return;
         }
-        displayName.interactable = false;
-        joinMatchInput.interactable = false;
-        joinButton.interactable = false;
-        hostButton.interactable = false;
+        //displayName.interactable = false;
+        //joinMatchInput.interactable = false;
+        //joinButton.interactable = false;
+        //hostButton.interactable = false;
 
         configuration = GameObject.FindGameObjectWithTag("Configuration").GetComponent<Configuration>();
         networkManager = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkLobbyManagerCustomised>();

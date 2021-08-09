@@ -5,6 +5,7 @@ using Mirror;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.Experimental.Rendering.Universal;
+using UnityEngine.UI;
 
 public class States : NetworkBehaviour
 {
@@ -81,6 +82,8 @@ public class States : NetworkBehaviour
                     GameObject.FindGameObjectWithTag("Defend").transform.GetChild(2)
                         .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
                 }
+                GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(1).
+                    GetChild(0).GetComponent<Image>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
             }
             else if (_finishGame == 4)
             {
@@ -102,6 +105,12 @@ public class States : NetworkBehaviour
                     GameObject.FindGameObjectWithTag("Defend").transform.GetChild(3)
                         .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
                 }
+                GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(0).
+                    GetChild(0).GetComponent<Image>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(1).
+                    GetChild(0).GetComponent<Image>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
+                GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(2).
+                    GetChild(0).GetComponent<Image>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
             }
 
             if (saboCD && intelCD)
@@ -116,6 +125,8 @@ public class States : NetworkBehaviour
                     GameObject.FindGameObjectWithTag("Defend").transform.GetChild(1)
                         .GetComponent<SpriteRenderer>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
                 }
+                GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(0).
+                    GetChild(0).GetComponent<Image>().color = new Color(60 / 255f, 60 / 255f, 60 / 255f);
             }
         }
     }
@@ -163,6 +174,8 @@ public class States : NetworkBehaviour
                             GameObject.FindGameObjectWithTag("Defend").transform.GetChild(1)
                                 .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
                         }
+                        GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(0).
+                            GetChild(0).GetComponent<Image>().color = new Color(1f, 1f, 1f);
                     }
                     break;
                 case 2:
@@ -179,6 +192,8 @@ public class States : NetworkBehaviour
                             GameObject.FindGameObjectWithTag("Defend").transform.GetChild(1)
                                 .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
                         }
+                        GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(0).
+                            GetChild(0).GetComponent<Image>().color = new Color(1f, 1f, 1f);
                     }
                     break;
                 case 3:
@@ -193,6 +208,8 @@ public class States : NetworkBehaviour
                         GameObject.FindGameObjectWithTag("Defend").transform.GetChild(2)
                             .GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
                     }
+                    GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(1).
+                        GetChild(0).GetComponent<Image>().color = new Color(1f, 1f, 1f);
                     break;
                 default:
                     break;
@@ -305,6 +322,8 @@ public class States : NetworkBehaviour
                         GameObject.FindGameObjectWithTag("Defend").transform.GetChild(3).
                             GetComponent<SpriteRenderer>().color = new Color(76 / 255f, 76 / 255f, 76 / 255f);
                     }
+                    GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(2).
+                        GetChild(0).GetComponent<Image>().color = new Color(76 / 255f, 76 / 255f, 76 / 255f);
                     colorChanged = true;
                     string newMsg = "Check your generator!\n";
                     StartCoroutine(setText(newMsg));
@@ -321,6 +340,8 @@ public class States : NetworkBehaviour
                         GameObject.FindGameObjectWithTag("Defend").transform.GetChild(3).
                             GetComponent<SpriteRenderer>().color = new Color(1f,1f,1f);
                     }
+                    GameObject.FindGameObjectWithTag("UI").transform.GetChild(8).GetChild(2).
+                        GetChild(0).GetComponent<Image>().color = new Color(1f, 1f, 1f);
                     colorChanged = false;
                     string newMsg = "Generator Fixed!\n";
                     StartCoroutine(setText(newMsg));
