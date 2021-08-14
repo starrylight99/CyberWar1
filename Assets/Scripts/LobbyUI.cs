@@ -8,6 +8,7 @@ using System;
 using PlayFab.ClientModels;
 using PlayFab.MultiplayerModels;
 using Mirror;
+using kcp2k;
 using PlayFab.Networking;
 using PlayFab.Helpers;
 public class LobbyUI : MonoBehaviour
@@ -25,7 +26,7 @@ public class LobbyUI : MonoBehaviour
     private bool accepted = true;
     Configuration configuration;
     NetworkLobbyManagerCustomised networkManager;
-    TelepathyTransport telepathyTransport;
+    KcpTransport kcpTransport;
     bool host;
     String playFabId;
     PlayFabAuthService _authService;
@@ -100,7 +101,7 @@ public class LobbyUI : MonoBehaviour
 
         configuration = GameObject.FindGameObjectWithTag("Configuration").GetComponent<Configuration>();
         networkManager = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkLobbyManagerCustomised>();
-        telepathyTransport = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<TelepathyTransport>();
+        kcpTransport = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<KcpTransport>();
 
         //networkManager.OnConnected.AddListener(OnConnected);
 
@@ -142,7 +143,7 @@ public class LobbyUI : MonoBehaviour
 
         configuration = GameObject.FindGameObjectWithTag("Configuration").GetComponent<Configuration>();
         networkManager = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<NetworkLobbyManagerCustomised>();
-        telepathyTransport = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<TelepathyTransport>();
+        kcpTransport = GameObject.FindGameObjectWithTag("NetworkManager").GetComponent<KcpTransport>();
 
         //networkManager.OnConnected.AddListener(OnConnected);
 
@@ -253,7 +254,7 @@ public class LobbyUI : MonoBehaviour
             ushort portInt = (ushort)response.Ports[0].Num;
             port = portInt.ToString();
 			networkManager.networkAddress = response.IPV4Address;
-			telepathyTransport.port = (ushort)response.Ports[0].Num;
+			kcpTransport.Port = (ushort)response.Ports[0].Num;
             _authService.Authenticate();
         }
 	}
@@ -362,7 +363,7 @@ public class LobbyUI : MonoBehaviour
             if (data.Key == "ip"){
                 networkManager.networkAddress = data.Value.Value;
             } else if (data.Key == "port"){
-                telepathyTransport.port = Convert.ToUInt16(data.Value.Value);
+                kcpTransport.Port = Convert.ToUInt16(data.Value.Value);
             }
             Debug.Log(data.Key + " : " + data.Value.Value);
         }
