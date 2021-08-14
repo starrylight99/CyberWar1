@@ -216,8 +216,8 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
                 GetComponent<Camera>().enabled = true;
         GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
 
-        int visionScore = 10 + GameResources.GetFOWAmount(NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack);
-
+        int visionScore = 7 + 2 * GameResources.GetFOWAmount(NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack);
+        Debug.Log("Vision: "+visionScore);
         foreach (GameObject player in players)
         {
             player.GetComponent<FinalBattleBehaviour>().enabled = true;
@@ -225,13 +225,13 @@ public class NetworkLobbyManagerCustomised : NetworkRoomManager
                 GameObject mainVision = player.transform.Find("Vision").gameObject;
 
                 // Uncomment for variable vision
-                /* Light2D light = mainVision.transform.GetChild(0).GetComponent<Light2D>();
+                Light2D light = mainVision.transform.GetChild(0).GetComponent<Light2D>();
                 Light2D vision = mainVision.transform.GetChild(1).GetComponent<Light2D>();
 
                 light.pointLightOuterRadius = visionScore;
                 light.pointLightInnerRadius = visionScore/4*3;
                 vision.pointLightOuterRadius = visionScore;
-                vision.pointLightInnerRadius = visionScore/4*3; */
+                vision.pointLightInnerRadius = visionScore/4*3;
 
                 mainVision.SetActive(true);
             }

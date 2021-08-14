@@ -410,8 +410,22 @@ public class States : NetworkBehaviour
 
                 if (NetworkClient.localPlayer.gameObject.GetComponent<States>().isAttack == isAttack){
                     GameObject mainVision = transform.Find("Vision").gameObject;
+
+                    // Uncomment for variable vision
+                    Light2D light = mainVision.transform.GetChild(0).GetComponent<Light2D>();
+                    Light2D vision = mainVision.transform.GetChild(1).GetComponent<Light2D>();
+
+                    light.pointLightOuterRadius = GameResources.GetFOWAmount(isAttack);
+                    light.pointLightInnerRadius = GameResources.GetFOWAmount(isAttack)/4*3;
+                    vision.pointLightOuterRadius = GameResources.GetFOWAmount(isAttack);
+                    vision.pointLightInnerRadius = GameResources.GetFOWAmount(isAttack)/4*3;
+
                     mainVision.SetActive(true);
                 }
+                Debug.Log("Attack Gold:" +GameResources.GetGoldAmount(true));
+                Debug.Log("Def Gold:" +GameResources.GetGoldAmount(false));
+                Debug.Log("Attack fow:" +GameResources.GetFOWAmount(true));
+                Debug.Log("Def fow:" +GameResources.GetFOWAmount(false));
                 if (isAttack)
                 {
                     GetComponentInChildren<TextMeshProUGUI>().color = new Color(255/255.0f, 185/255.0f, 185/255.0f);
